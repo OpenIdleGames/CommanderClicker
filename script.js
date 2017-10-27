@@ -244,4 +244,8 @@ Load();
 setTimeout(update, 100);
 setTimeout(tick, tickTime);
 
+for(var i = 0; i < units.length; i++){
+        document.getElementById("UnitName" + i).innerHTML = units[i].name;
+    }
+
 
