@@ -1,5 +1,6 @@
 window.ondragstart = function() { return false; };
 
+
 var tickTime =  100;
 
 var coinIMG;
@@ -14,6 +15,7 @@ var units = [];
 
 
 var buyAmount = 1;
+
 
 function Unit(name, baseCost, cps, known, num) {
     
@@ -79,6 +81,14 @@ function UnitInit(){
 
 }
 
+function UnitMouseOver(a) {
+    a.style.backgroundColor = "#a6c1bd";
+}
+
+function UnitMouseout(a) {
+   a.style.backgroundColor = "#bcd5d1";
+}
+
 function Click() {
     clickCount++;
     setTimeout(ClickMin,1000);
@@ -120,10 +130,10 @@ function UpdateCPS() {
     var cpsText = format(cps + clickCount * clickM);
     
     if(cps != 1){
-        cpsText += " coins per second";
+        cpsText += " per second";
     }
     else{
-        cpsText += " coin per second";        
+        cpsText += " per second";        
     }
     document.getElementById("cps1").innerHTML = cpsText;
 }
@@ -163,11 +173,12 @@ function format(value) {
 
 
 
-function tick(){
+function tick(){    
     CalcCPS();
     coins += cps / (1000 / tickTime);
-    //console.log("tick");    
-    //Save();
+    console.log("tick");    
+    Save();
+    setTimeout(tick, tickTime);
 }
 
 function update(){
@@ -187,6 +198,7 @@ function update(){
     UpdateCPS(); 
     UpdateUnitStuff();
     document.getElementById("clicksC").innerHTML = (clickCount * clickM) + " coins from clicks per second";
+    setTimeout(update, 100);
 }
 
 
@@ -231,8 +243,8 @@ function CalcCPS(){
 
 UnitInit();
 Load();
-setInterval(update, 100);
-setInterval(tick, tickTime);
+setTimeout(update, 100);
+setTimeout(tick, tickTime);
 
 
 

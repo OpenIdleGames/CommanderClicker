@@ -78,7 +78,8 @@ div {
 .UnitDiv{
     border:  2px solid #e8edf3;
     border-collapse: collapse;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .UnitTable{

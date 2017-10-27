@@ -19,7 +19,7 @@
         <div class="main1 noselect">
             <h1>Coins</h1>
             <h4 id="coin1">0 coins</h4>
-            <p id="cps1">0 coins per second</p>
+            <p id="cps1">0 per second</p>
             <br><br>
             <p id="clicksC"></p>
             <a onclick="Click()"><img id="coin" class="coin" draggable="false" width="200px" height="200px" src="coins.svg"></a>
@@ -41,8 +41,8 @@
             </div>
             
             <!--Unit start-->
-            <a>
-                <div class="UnitDiv">                
+            <a onmouseover="UnitMouseOver(Unit0)" onmouseout="UnitMouseout(Unit0)"  onclick="BuyUnit(0)">
+                <div class="UnitDiv" id="Unit0">                
                     <table class="UnitTable">
                         <tr>
                             <td colspan="3"><p class="UnitP">Peasant</p></td>
@@ -56,11 +56,6 @@
                             </td>
                             <td>
                                 <span id="UnitNum0">Owned: 0</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <button class="UnitButton" onclick="BuyUnit(0)">Buy Unit</button>
                             </td>
                         </tr>
 
