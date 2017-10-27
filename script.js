@@ -59,28 +59,28 @@ function BuyUnit(id){
 
 function UnitInit(){
     //name, baseCost, cps, known
-    units[0] = new Unit("Peasant", 16., 1, true, 0);
-    units[1] = new Unit("Brute", 130, 5, true, 0);
-    units[2] = new Unit("Spearman", 1280, 32, true, 0);
-    units[3] = new Unit("Knight", 15600, 220, true, 0);
-    units[4] = new Unit("Bowman", 233000, 1710, true, 0);
+    units[0] = new Unit("Peasant", 16, 1, true, 0);
+    units[1] = new Unit("Brute", 130, 16, true, 0);
+    units[2] = new Unit("Spearman", 1280, 80, true, 0);
+    units[3] = new Unit("Knight", 15600, 490, true, 0);
+    units[4] = new Unit("Bowman", 233000, 3600, true, 0);
     
-    units[5] = new Unit("Musketeer", 4118000, 15600, true, 0);
-    units[6] = new Unit("Rifleman", 83890000, 161000, true, 0);
-    units[7] = new Unit("Marine", 1937100000, 1877000, true, 0);
-    units[8] = new Unit("Swat", 50000000000, 24320000, true, 0);
-    units[9] = new Unit("Cannon", 1426560000000, 347600000, true, 0);
+    units[5] = new Unit("Musketeer", 4118000, 32200, true, 0);
+    units[6] = new Unit("Rifleman", 83890000, 328000, true, 0);
+    units[7] = new Unit("Marine", 1937100000, 3783000, true, 0);
+    units[8] = new Unit("Swat", 50000000000, 696600000, true, 0);
+    units[9] = new Unit("Cannon", 1426560000000, 10883900000, true, 0);
 
-    //units[10] = new Unit("Peasant", 16., 1, true, 0);
-    //units[11] = new Unit("Brute", 130, 5, true, 0);
-    //units[12] = new Unit("Spearman", 1280, 32, true, 0);
-    //units[13] = new Unit("Knight", 15600, 220, true, 0);
-    //units[14] = new Unit("Bowman", 233000, 1710, true, 0);
+    units[10] = new Unit("SAS", 44580500000000, 10883900000, true, 0);
+    units[11] = new Unit("Spetznaz", 1514375500000000, 184860000000, true, 0);
+    units[12] = new Unit("APC", 55560034000000000, 3391120000000, true, 0);
+    units[13] = new Unit("MBT", 2189469450000000000, 66817300000000, true, 0);
+    units[14] = new Unit("Choppa", 92233720400000000000, 1407374900000000, true, 0);
 
-    //units[15] = new Unit("Peasant", 16., 1, true, 0);
-    //units[16] = new Unit("Brute", 130, 5, true, 0);
-    //units[17] = new Unit("Spearman", 1280, 32, true, 0);
-    //units[18] = new Unit("Knight", 15600, 220, true, 0);
+    units[15] = new Unit("Aircraft", 4136201309000000000000, 31556712000000000, true, 0);
+    units[16] = new Unit("ICBM", 196732040380000000000000, 750473180000000000, true, 0);
+    units[17] = new Unit("Mecha", 9892098278300000000000000, 18867680100000000000, true, 0);
+    units[18] = new Unit("Death ray", 524288000000000000000000000, 500000000000000000000, true, 0);
 
 
 }
@@ -148,7 +148,7 @@ function UpdateUnitStuff() {
         else{
             c.style.color = "#ff0000"
         }
-        document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.ccps());
+        document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
         document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
         
     }
