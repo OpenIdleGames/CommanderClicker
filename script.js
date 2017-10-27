@@ -82,7 +82,6 @@ function UnitInit(){
     units[17] = new Unit("Mecha", 9892098278300000000000000, 18867680100000000000, true, 0);
     units[18] = new Unit("Death ray", 524288000000000000000000000, 500000000000000000000, true, 0);
 
-
 }
 
 
@@ -150,7 +149,7 @@ function UpdateUnitStuff() {
         }
         document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
         document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
-        
+        document.getElementById("UnitName" + i).innerHTML = units[i].name;
     }
 }
 
@@ -175,7 +174,6 @@ function tick(){
     coins += cps / (1000 / tickTime);
     //console.log("tick");    
     Save();
-    setTimeout(tick, tickTime);
 }
 
 function update(){
@@ -195,7 +193,6 @@ function update(){
     UpdateCPS(); 
     UpdateUnitStuff();
     document.getElementById("clicksC").innerHTML = (clickCount * clickM) + " coins from clicks per second";
-    setTimeout(update, 100);
 }
 
 
@@ -241,11 +238,12 @@ function CalcCPS(){
 
 UnitInit();
 Load();
-setTimeout(update, 100);
-setTimeout(tick, tickTime);
-
-for(var i = 0; i < units.length; i++){
-        document.getElementById("UnitName" + i).innerHTML = units[i].name;
-    }
+setInterval(update, 100);
+setInterval(tick, tickTime);
 
 
+
+setTimeout(function() {for(var i = 0; i < units.length; i++) {
+        var u = units[i];
+        document.getElementById("UnitName" + i).innerHTML = u.name;
+    }}, 100);
