@@ -53,11 +53,29 @@ function BuyUnit(id){
 
 function UnitInit(){
     //name, baseCost, cps, known
-    units[0] = new Unit("Peasant", 16.0, 1, true, 0);
+    units[0] = new Unit("Peasant", 16., 1, true, 0);
     units[1] = new Unit("Brute", 130, 5, true, 0);
     units[2] = new Unit("Spearman", 1280, 32, true, 0);
     units[3] = new Unit("Knight", 15600, 220, true, 0);
     units[4] = new Unit("Bowman", 233000, 1710, true, 0);
+    
+    units[5] = new Unit("Musketeer", 4118000, 15600, true, 0);
+    units[6] = new Unit("Rifleman", 83890000, 161000, true, 0);
+    units[7] = new Unit("Marine", 1937100000, 1877000, true, 0);
+    units[8] = new Unit("Swat", 50000000000, 24320000, true, 0);
+    units[9] = new Unit("Cannon", 1426560000000, 347600000, true, 0);
+
+    //units[10] = new Unit("Peasant", 16., 1, true, 0);
+    //units[11] = new Unit("Brute", 130, 5, true, 0);
+    //units[12] = new Unit("Spearman", 1280, 32, true, 0);
+    //units[13] = new Unit("Knight", 15600, 220, true, 0);
+    //units[14] = new Unit("Bowman", 233000, 1710, true, 0);
+
+    //units[15] = new Unit("Peasant", 16., 1, true, 0);
+    //units[16] = new Unit("Brute", 130, 5, true, 0);
+    //units[17] = new Unit("Spearman", 1280, 32, true, 0);
+    //units[18] = new Unit("Knight", 15600, 220, true, 0);
+
 
 }
 
