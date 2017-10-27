@@ -7,6 +7,9 @@ var coinIMG;
 
 var clickCount = 0;
 var clickM = 1;
+var clickingTime = 0;
+
+var clickingBonus = 1;
 
 
 var coins = 0;
@@ -51,6 +54,7 @@ function BuyUnit(id){
         }
     }
     //console.log("buy " + buyAmount + " of " + units[id].name + " worth " + units[id].cost2(val));
+    
 }
 
 function UnitInit(){
@@ -81,13 +85,6 @@ function UnitInit(){
 
 }
 
-function UnitMouseOver(a) {
-    a.style.backgroundColor = "#a6c1bd";
-}
-
-function UnitMouseout(a) {
-   a.style.backgroundColor = "#bcd5d1";
-}
 
 function Click() {
     clickCount++;
@@ -162,7 +159,7 @@ function format(value) {
     if(value < 1000000){
         text = numeral(value).format("0,0");
     }
-    else if(value < 100000000000000000){
+    else if(value < 100000000000000){
         text = numeral(value).format("0,0.00 a");
     }
     else{
@@ -176,7 +173,7 @@ function format(value) {
 function tick(){    
     CalcCPS();
     coins += cps / (1000 / tickTime);
-    console.log("tick");    
+    //console.log("tick");    
     Save();
     setTimeout(tick, tickTime);
 }
@@ -236,6 +233,7 @@ function CalcCPS(){
     for(var i = 0; i < units.length; i++){
         cps += units[i].ccps();
     }
+    cps *= clickingBonus;
 }
 
 
@@ -245,7 +243,5 @@ UnitInit();
 Load();
 setTimeout(update, 100);
 setTimeout(tick, tickTime);
-
-
 
 

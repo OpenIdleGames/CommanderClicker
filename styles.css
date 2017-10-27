@@ -80,6 +80,15 @@ div {
     border-collapse: collapse;
     margin-bottom: 5px;
     margin-top: 5px;
+    background-color: #bcd5d1;
+}
+
+.UnitDiv:hover{
+    background-color: #a6c1bd;
+}
+
+.UnitDiv:active{
+    background-color: #a4d6cd;
 }
 
 .UnitTable{
@@ -126,6 +135,7 @@ h1 {
 label {
     margin-right: 10px;
 }
+
 
 
 
