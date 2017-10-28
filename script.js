@@ -7,13 +7,16 @@ var coinIMG;
 
 var clickCount = 0;
 var clickM = 1;
-var clickingTime = 0;
 
 var clickingBonus = 1;
 
 
 var coins = 0;
 var cps = 0;
+
+var coinsOverflow = 0;
+var cpsOverflow = 0;
+
 var units = [];
 
 
@@ -62,6 +65,15 @@ function BuyUnit(id){
     
 }
 
+function GCoins (amount) {
+    
+}
+
+function ACoins (amount) {
+    
+}
+
+
 function UnitInit(){
     //name, baseCost, cps, known
     units[0] = new Unit("Peasant", 16, 1, true, 0);
@@ -96,7 +108,7 @@ function Click() {
     coins += clickM * 1;
     UpdateCoinTexts();
     UpdateCPS();
-    coinIMG =  document.getElementById("coin")
+    coinIMG =  document.getElementById("coin");
     coinIMG.style.width = 210 + "px";
     coinIMG.style.height = 210 + "px";
     setTimeout(ClickStyle, 40);
@@ -149,10 +161,10 @@ function UpdateUnitStuff() {
             var c = document.getElementById("UnitCost" + i);
             c.innerHTML = "Cost: " + format(u.cost2(buyAmount));
             if(coins - u.cost2(buyAmount) >= 0){
-                c.style.color = "#00c129"
+                c.style.color = "#00c129";
             }
             else{
-                c.style.color = "#ff0000"
+                c.style.color = "#ff0000";
             } 
             document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
             document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
@@ -164,16 +176,49 @@ function UpdateUnitStuff() {
 function format(value) {
     var text = "";
     if(value < 1000000){
-        text = numeral(value).format("0,0");
-    }
-    else if(value < 100000000000000){
-        text = numeral(value).format("0,0.00 a");
+        text = numeral(value).format("0,000");
     }
     else{
-        text = numeral(value).format("0.0e+0");
+        
+        text = nFormatter(value, 3);
     }
     return text;
 }
+
+
+function nFormatter(num, digits) {
+  var si = [
+    { value: 1E69, symbol: "DuoVg" },
+    { value: 1E66, symbol: "UnVg" },
+    { value: 1E63, symbol: "Vg" },
+    { value: 1E60, symbol: "NoDc" },
+    { value: 1E57, symbol: "OcDc" },
+    { value: 1E54, symbol: "SeDc" },
+    { value: 1E51, symbol: "SxDc" },
+    { value: 1E48, symbol: "QiDc" },
+    { value: 1E45, symbol: "QaDc" },
+    { value: 1E42, symbol: "TreDc" },
+    { value: 1E39, symbol: "DuoDc" },
+    { value: 1E36, symbol: "UnDc" },
+    { value: 1E33, symbol: "Dc" },
+    { value: 1E30, symbol: "No" },
+    { value: 1E27, symbol: "Oc" },
+    { value: 1E24, symbol: "Sp" },
+    { value: 1E21, symbol: "Sx" },
+    { value: 1E18, symbol: "Qi" },
+    { value: 1E15, symbol: "Qa" },
+    { value: 1E12, symbol: "T" },
+    { value: 1E9,  symbol: "B" },
+    { value: 1E6,  symbol: "M" }
+  ], rx = /\.0+$|(\.[0-9]*[1-9])0+$/, i;
+  for (i = 0; i < si.length; i++) {
+    if (num >= si[i].value) {
+      return (num / si[i].value).toFixed(digits).replace(rx, "$1") + " " + si[i].symbol;
+    }
+  }
+  return num.toFixed(digits).replace(rx, "$1");
+}
+
 
 
 
@@ -222,7 +267,7 @@ function Save(){
 function Load(){
     coins = parseFloat(localStorage.getItem("coin"));
     cps = parseFloat(localStorage.getItem("cps"));
-    lastTickTime = parseInt(localStorage.getItem("lastTick"))
+    lastTickTime = parseInt(localStorage.getItem("lastTick"));
     for(var i = 0; i < units.length; i++){
         units[i].num = parseInt(localStorage.getItem("unit" + i));
     }
@@ -230,7 +275,7 @@ function Load(){
     var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
     var ccps = (cps / (1000 / tickTime)) * deltaTime;
     if(deltaTime / 10 >= 10  && deltaTime * 10 <= 3600){
-        alert("Game loaded and you got " + format(ccps) + " coins after being away for " + Math.round(deltaTime / 1000 * tickTime) + " seconds.") 
+        alert("Game loaded and you got " + format(ccps) + " coins after being away for " + Math.round(deltaTime / 1000 * tickTime) + " seconds."); 
     }
     coins += ccps;
     lastTickTime = Date.now();
@@ -267,16 +312,16 @@ setInterval(tick, tickTime);
 function UnitShow() {
     for(var i = 0; i < units.length; i++) {
         var u = units[i];
-        if(i != 0 && units[i-1].num > 0){
+        if(i !== 0 && units[i-1].num > 0){
             u.known = true;
         }
         if(u.known){
             document.getElementById("UnitName" + i).innerHTML = u.name;
-            var u = document.getElementById("U"+i);
-            u.className = "";
+            var k = document.getElementById("U"+i);
+            k.className = "UnitA";
             document.getElementById("UD" + i).className = "UnitDiv";
         }
-        else if(i != 0 && units[i-1].known){
+        else if(i !== 0 && units[i-1].known){
             document.getElementById("UnitName" + i).innerHTML = "???";
             var a = document.getElementById("U"+i);
             a.className = "";
@@ -287,13 +332,36 @@ function UnitShow() {
             document.getElementById("UD" + i).className = "UnitDivUnknown";
         }
         else{
-            var u = document.getElementById("U"+i);
-            u.className = "";
-            u.className += "DisabledUnitA";
+            var f = document.getElementById("U"+i);
+            f.className = "";
+            f.className += "DisabledUnitA";
         }
         
     }
 }
+
+function SelectMainWindow (num, title)
+{
+    document.getElementById("D2Title").innerHTML = title;
+    for(var i = 0; i < 4; i++){
+        if(num != i){
+            document.getElementById("Main2W"+i).className += " DisabledMain2";
+        }
+        else{
+            document.getElementById("Main2W"+i).className -= " DisabledMain2";
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 setTimeout(UnitShow, 100);

@@ -13,12 +13,8 @@
 </head>
 
 <body onbeforeunload="Save()">
+    <div class="header">Army Clicker <span style="margin-left: 40px">Build an army for raiding villages and aquire more coins!</span></div>
   <div class="container">
-        <div class="header">
-            <h1>Army Clicker</h1>
-            <h3>Buy more units to raid the world and steal their coins</h3>
-      </div>
-
         <div class="main1 noselect">
             <h1>Coins</h1>
             <h4 id="coin1">0 coins</h4>
@@ -29,7 +25,35 @@
             
         </div>
         <div class="main2 noselect">
-            <h1>Overview</h1>
+            <div id="Main2Selector" class="Main2Selector">
+                
+                <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
+                <button onclick="SelectMainWindow(1, 'Achievements')">Achievements</button>
+                <button onclick="SelectMainWindow(2, 'Raid')">Raid</button>
+                <button onclick="SelectMainWindow(3, 'Options')">Options</button>
+                
+                <h1 id="D2Title">Overview</h1>
+            </div>
+            
+            <div id="Main2Container" class="Main2Container">
+            
+                <div id="Main2W0" class="">
+                </div>
+                
+                <div id="Main2W1" class="DisabledMain2">
+                </div>
+                
+                <div id="Main2W2" class="DisabledMain2">
+                </div>
+                
+                <div id="Main2W3" class="Options DisabledMain2">
+                    <button onclick="Save()">Save</button>
+                    <button onclick="Load()">Load</button>
+                    <button onclick="Reset()">Reset</button>
+                </div>
+            
+            </div>
+            
 
           </div>
         <div class="main3 noselect" id="main3">
@@ -503,11 +527,6 @@
         </div>
             
 
-        <div class="footer">
-            <button onclick="Save()">Save</button>
-            <button onclick="Load()">Load</button>
-            <button onclick="Reset()">Reset</button>
-        </div>
   </div>
 
 </body>

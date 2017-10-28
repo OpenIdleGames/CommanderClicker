@@ -1,66 +1,86 @@
-body{
-    
+body{    
     background-color: #e8edf3;
-    
+    margin: 0px;
 }
 
 
 .container{
-      display: grid;
-      grid-template-columns: 25% 50% 25%;
-      grid-template-rows: 10vh 78vh 10vh;
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    grid-template-rows: 96vh;
 
-      grid-template-areas:
-        "header header header"
-        "main1 main2 main3"
-        "footer footer footer";
+    grid-template-areas: "main1 main2 main3";    
     text-align: center;
+    margin: 0px;
 }
 
 
 div {
     background-color: #bcd5d1;
 }
-
-.header{
-    grid-area: header;
+.header {
+    height: 3vh;
+    background-color: darkslategrey;
     text-align: center;
-    border: 5px solid #e8edf3;
-    box-shadow: 10px 10px 5px #888888;
+    color: aliceblue;
+    font-size: 20px;
+    font-weight: bold;
 }
+
 
 .main1{
     grid-area: main1;
     text-align: center;
     padding: 20px;
-    border: 5px solid #e8edf3;
+    border-right: 15px solid #e8edf3;
     overflow-y: auto;
-    box-shadow: 10px 10px 5px #888888;
+    //box-shadow: 10px 10px 5px #888888;
 }
 
 .main2{
     grid-area: main2;
     text-align: center;
     padding: 20px;
-    border: 5px solid #e8edf3;
+    border-right: 15px solid #e8edf3;
     overflow-y: auto;
-    box-shadow: 10px 10px 5px #888888;
+    //box-shadow: 10px 10px 5px #888888;
 }
 
 .main3{
     grid-area: main3;
     text-align: center;
     padding: 20px;
-    border: 5px solid #e8edf3;
+    //border: 5px solid #e8edf3;
     overflow-y: auto;
-    box-shadow: 10px 10px 5px #888888;
+    //box-shadow: 10px 10px 5px #888888;
 }
-.footer{
-    grid-area: footer;
+
+.Main2Selector {
+    height: 20vh;
+}
+
+.Main2Container {
+    position: relative;
+    height: 76vh;
+}
+
+
+
+.Main2Selector button{
+    height: 40px;
+    width: 100px;
+    margin: 5px;
+    padding: 5px;
     text-align: center;
-    border: 5px solid #e8edf3;
-    box-shadow: 10px 10px 5px #888888;
+    box-shadow: 2px 2px 2px #888888;
+    background-color: #e8edf3;
 }
+
+
+.Options{
+    
+}
+
 
 
 .noselect {
@@ -87,6 +107,8 @@ div {
     margin-top: 5px;
     background-color: #bcd5d1;
     box-shadow: 4px 4px 3px #888888;
+    //background-image: url(UnitBG.png);
+    //background-size: cover;
 }
 
 .UnitDivUnknown{
@@ -94,7 +116,7 @@ div {
     border-collapse: collapse;
     margin-bottom: 5px;
     margin-top: 5px;
-    background-color: gray;
+    background-color: grey;
     box-shadow: 4px 4px 3px #888888;
 }
 
@@ -166,16 +188,21 @@ label {
     margin-right: 10px;
 }
 
+.UnitA {
+   
+}
+
+
 
 .DisabledUnitA {
     /* position: absolute; */
     /* visibility: hidden; */
-    
-    
     display: none;
 }
 
-
+.DisabledMain2 {
+    display: none;
+}
 
 
 
