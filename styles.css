@@ -89,6 +89,15 @@ div {
     box-shadow: 4px 4px 3px #888888;
 }
 
+.UnitDivUnknown{
+    border:  2px solid #e8edf3;
+    border-collapse: collapse;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    background-color: gray;
+    box-shadow: 4px 4px 3px #888888;
+}
+
 .UnitDiv:hover{
     background-color: #a6c1bd;
 }
@@ -153,6 +162,14 @@ label {
     margin-right: 10px;
 }
 
+
+.DisabledUnitA {
+    /* position: absolute; */
+    /* visibility: hidden; */
+    
+    
+    display: none;
+}
 
 
 

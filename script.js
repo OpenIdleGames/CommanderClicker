@@ -22,6 +22,8 @@ var buyAmount = 1;
 
 var lastTickTime = 0.0;
 
+var run = true;
+
 function Unit(name, baseCost, cps, known, num) {
     
     this.name = name;
@@ -56,6 +58,7 @@ function BuyUnit(id){
         }
     }
     //console.log("buy " + buyAmount + " of " + units[id].name + " worth " + units[id].cost2(val));
+    UnitShow();
     
 }
 
@@ -63,26 +66,26 @@ function UnitInit(){
     //name, baseCost, cps, known
     units[0] = new Unit("Peasant", 16, 1, true, 0);
     units[1] = new Unit("Brute", 130, 16, true, 0);
-    units[2] = new Unit("Spearman", 1280, 80, true, 0);
-    units[3] = new Unit("Knight", 15600, 490, true, 0);
-    units[4] = new Unit("Bowman", 233000, 3600, true, 0);
+    units[2] = new Unit("Spearman", 1280, 80, false, 0);
+    units[3] = new Unit("Knight", 15600, 490, false, 0);
+    units[4] = new Unit("Bowman", 233000, 3600, false, 0);
     
-    units[5] = new Unit("Musketeer", 4118000, 32200, true, 0);
-    units[6] = new Unit("Rifleman", 83890000, 328000, true, 0);
-    units[7] = new Unit("Marine", 1937100000, 3783000, true, 0);
-    units[8] = new Unit("Swat", 50000000000, 696600000, true, 0);
-    units[9] = new Unit("Cannon", 1426560000000, 10883900000, true, 0);
+    units[5] = new Unit("Musketeer", 4118000, 32200, false, 0);
+    units[6] = new Unit("Rifleman", 83890000, 328000, false, 0);
+    units[7] = new Unit("Marine", 1937100000, 3783000, false, 0);
+    units[8] = new Unit("Swat", 50000000000, 696600000, false, 0);
+    units[9] = new Unit("Cannon", 1426560000000, 10883900000, false, 0);
 
-    units[10] = new Unit("SAS", 44580500000000, 10883900000, true, 0);
-    units[11] = new Unit("Spetznaz", 1514375500000000, 184860000000, true, 0);
-    units[12] = new Unit("APC", 55560034000000000, 3391120000000, true, 0);
-    units[13] = new Unit("MBT", 2189469450000000000, 66817300000000, true, 0);
-    units[14] = new Unit("Choppa", 92233720400000000000, 1407374900000000, true, 0);
+    units[10] = new Unit("SAS", 44580500000000, 10883900000, false, 0);
+    units[11] = new Unit("Spetznaz", 1514375500000000, 184860000000, false, 0);
+    units[12] = new Unit("APC", 55560034000000000, 3391120000000, false, 0);
+    units[13] = new Unit("MBT", 2189469450000000000, 66817300000000, false, 0);
+    units[14] = new Unit("Choppa", 92233720400000000000, 1407374900000000, false, 0);
 
-    units[15] = new Unit("Aircraft", 4136201309000000000000, 31556712000000000, true, 0);
-    units[16] = new Unit("ICBM", 196732040380000000000000, 750473180000000000, true, 0);
-    units[17] = new Unit("Mecha", 9892098278300000000000000, 18867680100000000000, true, 0);
-    units[18] = new Unit("Death ray", 524288000000000000000000000, 500000000000000000000, true, 0);
+    units[15] = new Unit("Aircraft", 4136201309000000000000, 31556712000000000, false, 0);
+    units[16] = new Unit("ICBM", 196732040380000000000000, 750473180000000000, false, 0);
+    units[17] = new Unit("Mecha", 9892098278300000000000000, 18867680100000000000, false, 0);
+    units[18] = new Unit("Death ray", 524288000000000000000000000, 500000000000000000000, false, 0);
 
 }
 
@@ -141,17 +144,20 @@ function UpdateUnitStuff() {
     
     for(var i = 0; i < units.length; i++) {
         var u = units[i];
-        var c = document.getElementById("UnitCost" + i);
-        c.innerHTML = "Cost: " + format(u.cost2(buyAmount));
-        if(coins - u.cost2(buyAmount) >= 0){
-            c.style.color = "#00c129"
+        
+        if(u.known){
+            var c = document.getElementById("UnitCost" + i);
+            c.innerHTML = "Cost: " + format(u.cost2(buyAmount));
+            if(coins - u.cost2(buyAmount) >= 0){
+                c.style.color = "#00c129"
+            }
+            else{
+                c.style.color = "#ff0000"
+            } 
+            document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
+            document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
         }
-        else{
-            c.style.color = "#ff0000"
-        }
-        document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
-        document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
-        document.getElementById("UnitName" + i).innerHTML = units[i].name;
+        //document.getElementById("UnitName" + i).innerHTML = units[i].name;
     }
 }
 
@@ -171,11 +177,15 @@ function format(value) {
 
 
 
-function tick(){    
-    CalcCPS();
-    coins += (cps / (1000 / tickTime)) * parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ 100)); 
-    lastTickTime = parseInt(Date.now());   
-    Save();
+function tick(){ 
+    if(run){       
+        CalcCPS();    
+        var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
+        var ccps = (cps / (1000 / tickTime)) * deltaTime;    
+        coins += ccps; 
+        lastTickTime = parseInt(Date.now());   
+        Save(); 
+    }
 }
 
 function update(){
@@ -190,7 +200,6 @@ function update(){
             break;
         }
     }
-    
     UpdateCoinTexts();
     UpdateCPS(); 
     UpdateUnitStuff();
@@ -217,7 +226,14 @@ function Load(){
     for(var i = 0; i < units.length; i++){
         units[i].num = parseInt(localStorage.getItem("unit" + i));
     }
-    alert("You loaded the game and got " + format((cps / (1000 / tickTime)) * parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ 100))) + " coins")
+    
+    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
+    var ccps = (cps / (1000 / tickTime)) * deltaTime;
+    if(deltaTime / 10 >= 10  && deltaTime * 10 <= 3600){
+        alert("Game loaded and you got " + format(ccps) + " coins after being away for " + Math.round(deltaTime / 1000 * tickTime) + " seconds.") 
+    }
+    coins += ccps;
+    lastTickTime = Date.now();
 }
 
 
@@ -248,8 +264,36 @@ setInterval(update, 100);
 setInterval(tick, tickTime);
 
 
-
-setTimeout(function() {for(var i = 0; i < units.length; i++) {
+function UnitShow() {
+    for(var i = 0; i < units.length; i++) {
         var u = units[i];
-        document.getElementById("UnitName" + i).innerHTML = u.name;
-    }}, 100);
+        if(i != 0 && units[i-1].num > 0){
+            u.known = true;
+        }
+        if(u.known){
+            document.getElementById("UnitName" + i).innerHTML = u.name;
+            var u = document.getElementById("U"+i);
+            u.className = "";
+            document.getElementById("UD" + i).className = "UnitDiv";
+        }
+        else if(i != 0 && units[i-1].known){
+            document.getElementById("UnitName" + i).innerHTML = "???";
+            var a = document.getElementById("U"+i);
+            a.className = "";
+            var c = document.getElementById("UnitCost" + i);
+            c.innerHTML = "Cost: ???";
+            document.getElementById("UnitCPS" + i).innerHTML = "CPS: ???";
+            document.getElementById("UnitNum" + i).innerHTML = "Owned: ???";
+            document.getElementById("UD" + i).className = "UnitDivUnknown";
+        }
+        else{
+            var u = document.getElementById("U"+i);
+            u.className = "";
+            u.className += "DisabledUnitA";
+        }
+        
+    }
+}
+
+
+setTimeout(UnitShow, 100);
