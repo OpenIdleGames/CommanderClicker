@@ -20,6 +20,8 @@ var units = [];
 var buyAmount = 1;
 
 
+var lastTickTime = 0.0;
+
 function Unit(name, baseCost, cps, known, num) {
     
     this.name = name;
@@ -171,8 +173,8 @@ function format(value) {
 
 function tick(){    
     CalcCPS();
-    coins += cps / (1000 / tickTime);
-    //console.log("tick");    
+    coins += (cps / (1000 / tickTime)) * parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ 100)); 
+    lastTickTime = parseInt(Date.now());   
     Save();
 }
 
@@ -201,18 +203,21 @@ function update(){
 function Save(){
     localStorage.setItem("coin", coins);
     localStorage.setItem("cps", cps);
-    
+    localStorage.setItem("lastTick", lastTickTime);
     for(var i = 0; i < units.length; i++){
         localStorage.setItem("unit" + i, units[i].num);
     }
+    
 }
 
 function Load(){
     coins = parseFloat(localStorage.getItem("coin"));
     cps = parseFloat(localStorage.getItem("cps"));
+    lastTickTime = parseInt(localStorage.getItem("lastTick"))
     for(var i = 0; i < units.length; i++){
         units[i].num = parseInt(localStorage.getItem("unit" + i));
     }
+    alert("You loaded the game and got " + format((cps / (1000 / tickTime)) * parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ 100))) + " coins")
 }
 
 
@@ -223,6 +228,7 @@ function Reset(){
         localStorage.setItem("unit" + i, 0);
     }
     Load();
+    localStorage.setItem("lastTick", Date.now());
 }
 
 function CalcCPS(){

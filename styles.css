@@ -92,9 +92,20 @@ div {
 .UnitDiv:hover{
     background-color: #a6c1bd;
 }
+.UnitDiv:active:first-child{
+    margin-bottom: 3px;
+    margin-top: 5px;
+    margin-left: 1px;
+    background-color: #a4d6cd;
+    box-shadow: 3px 3px 3px #888888;
+}
 
 .UnitDiv:active{
+    margin-bottom: 3px;
+    margin-top: 5px;
+    margin-left: 1px;
     background-color: #a4d6cd;
+    box-shadow: 3px 3px 3px #888888;
 }
 
 .UnitTable{
