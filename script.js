@@ -169,7 +169,7 @@ function UpgradeInit() {
     }
     
     for(var k = 0; k < 10; k++) {
-        Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "+" + (100) + "% raiding power for clicks."));
+        Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "+" + (100) + "% power for clicks"));
     }
 }
 
