@@ -199,7 +199,6 @@ button:active{
 
 
 
-
 .Options{
     
 }
@@ -305,7 +304,8 @@ button:active{
 
 .UnitOuterDiv {
     position: relative;
-    
+    padding-top: 4px;
+    border-top: 15px solid var(--lightColor);
 }
 
 h1 {

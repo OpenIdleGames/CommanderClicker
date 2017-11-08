@@ -97,7 +97,20 @@ function Upgrade(name, cost, type, unitID, amount, known, desc) {
     this.unit = units[unitID];
     
     this.cost2 = function () {
-        return this.unit.baseCost * this.unit.num * (this.amount * this.amount * this.amount) * 16;
+        switch(this.type) 
+        {
+            case "Unit":
+                {
+                    return Math.pow(this.unit.baseCost, 2) * (this.amount * this.amount * this.amount) * 32;
+                    break;
+                }
+            case "Click":
+                {
+                    return Math.pow(1024, this.amount);
+                    break;
+                }
+        }
+        
     }
 }
 
@@ -109,6 +122,9 @@ function BuyUpgrade(id){
             u.activated = true;
             if(u.type == "Unit"){                
                 units[u.unitID].Upgrades = u.amount;
+            }
+            else if(u.type == "Click") {
+                clickM = u.amount + 1;
             }
         }
     }
@@ -150,6 +166,10 @@ function UpgradeInit() {
             Upgrades.push(
                 new Upgrade(u.name + " lvl " + (j+1), 1, "Unit", i, j+1, true, "+" + (100) + "% raiding power for " + u.name));
         }
+    }
+    
+    for(var k = 0; k < 10; k++) {
+        Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "+" + (100) + "% raiding power for clicks."));
     }
 }
 
@@ -261,7 +281,7 @@ function UpdateUnitStuff() {
             else {
                 unitCPSs[i].innerHTML = "CPS: " + format(u.cps);
             }
-            unitUPs[i].innerHTML = "Upgrades: " + u.Upgrades;
+            unitUPs[i].innerHTML = "Level: " + u.Upgrades;
             unitNums[i].innerHTML = "Owned: " + format(u.num);
         }
     }
@@ -309,6 +329,7 @@ function Save(){
     for(var j = 0; j < Upgrades.length; j++) {
         localStorage.setItem("Upgrade" + j, Upgrades[j].activated);
     }
+    localStorage.setItem("ClickM", clickM);
     
 }
 
@@ -323,6 +344,7 @@ function Load(){
     for(var j = 0; j < Upgrades.length; j++) {
         Upgrades[j].activated = localStorage.getItem("Upgrade" + j) == "true" ? true : false;
     }
+    clickM = parseInt(localStorage.getItem("ClickM"));
     
     var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
     var ccps = (cps / (1000 / tickTime)) * deltaTime;
@@ -343,12 +365,12 @@ function Reset(){
             units[i].known = false;
         }
     }
+    localStorage.setItem("ClickM", 1);
     for(var j = 0; j < Upgrades.length; j++) {
         localStorage.setItem("Upgrade" + j, false);
     }
-    
-    Load();
     localStorage.setItem("lastTick", Date.now());
+    Load();
     UnitShow();
 }
 
@@ -463,7 +485,6 @@ function nFormatter(num, digits) {
   return num.toFixed(digits).replace(rx, "$1");
 }
 
-
 function createUnit(unitID) {
     if(UnitOuterDiv == null){
         UnitOuterDiv = document.getElementById("UnitOuterDiv");
@@ -534,15 +555,26 @@ function UpgradeShow() {
     
     for(var i = 0; i < Upgrades.length; i++) {
         var u = Upgrades[i];
-        if(u.unit.num == 0 || u.activated || u.unit.Upgrades + 1 != u.amount) {            
-            document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
-        }else {
-            document.getElementById("Upgrade" + i).className = "Upgrade";
+        if(u.type == "Unit") {
+            if(u.unit.num == 0 || u.activated || u.unit.Upgrades + 1 != u.amount) {
+                document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
+            }
+            else {
+                document.getElementById("Upgrade" + i).className = "Upgrade";
+            } 
+        } 
+        else if(u.type == "Click") {
+            if(u.activated || clickM != u.amount) {
+                document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
+            }
+            else {
+                document.getElementById("Upgrade" + i).className = "Upgrade";
+            }
         }
+        
         
     }
 }
-
 
 function UpdateUpgradeStuff() {
     UpgradeArrayTest();
@@ -550,7 +582,12 @@ function UpdateUpgradeStuff() {
         var u = Upgrades[i];
         if(u.known && !u.activated){
             var c = UpgradeCosts[i];
-            if(u.unit.num > 0) {
+            if(u.type == "Unit"){
+                if(u.unit.num > 0) {
+                c.innerHTML = "Cost: " + format(u.cost2());
+                }
+            }
+            else if(u.type == "Click") {
                 c.innerHTML = "Cost: " + format(u.cost2());
             }
             if(coins - u.cost2() >= 0){
@@ -562,7 +599,6 @@ function UpdateUpgradeStuff() {
         }
     } 
 }
-
 
 function createUpgrade (UpgradeID) {
     if(UpgradeOuterDiv == null) {
