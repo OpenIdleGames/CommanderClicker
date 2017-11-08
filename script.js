@@ -18,14 +18,33 @@ var coinsOverflow = 0;
 var cpsOverflow = 0;
 
 var units = [];
-
+var Upgrades = [];
 
 var buyAmount = 1;
-
 
 var lastTickTime = 0.0;
 
 var run = true;
+
+var UnitOuterDiv;
+var UpgradeOuterDiv;
+
+
+var overviewWindow;
+var UpgradesWindow;
+var commanderWindow;
+var achievmentsWindow;
+var optionsWindow;
+
+
+var unitCosts = [];
+var unitCPSs = [];
+var unitNums = [];
+var unitUPs = [];
+
+
+var UpgradeCosts = [];
+
 
 function Unit(name, baseCost, cps, known, num) {
     
@@ -34,6 +53,7 @@ function Unit(name, baseCost, cps, known, num) {
     this.cps = cps;
     this.known = known;
     this.num = num;
+    this.Upgrades = 0;
     
     this.cost = function () {
         return Math.round(this.baseCost * Math.pow(1.15, this.num));
@@ -48,7 +68,7 @@ function Unit(name, baseCost, cps, known, num) {
     };
     
     this.ccps = function () {
-        return Math.round(this.cps * this.num);
+        return Math.round(this.cps * this.num * (1 + this.Upgrades));
     };
 }
 
@@ -60,24 +80,45 @@ function BuyUnit(id){
             u.num += buyAmount;
         }
     }
-    //console.log("buy " + buyAmount + " of " + units[id].name + " worth " + units[id].cost2(val));
     UnitShow();
-    
+    UpgradeShow();
+    Save();
 }
 
-function GCoins (amount) {
+function Upgrade(name, cost, type, unitID, amount, known, desc) {
+    this.name = name;
+    this.cost = cost;
+    this.type = type;
+    this.unitID = unitID;
+    this.amount = amount;
+    this.desc = desc;
+    this.known = known;
+    this.activated = false;
+    this.unit = units[unitID];
     
+    this.cost2 = function () {
+        return this.unit.baseCost * this.unit.num * (this.amount * this.amount * this.amount) * 16;
+    }
 }
 
-function ACoins (amount) {
-    
+function BuyUpgrade(id){
+    if(id < Upgrades.length){
+        var u = Upgrades[id];
+        if(coins - u.cost2() >= 0){
+            coins -= u.cost2();
+            u.activated = true;
+            if(u.type == "Unit"){                
+                units[u.unitID].Upgrades = u.amount;
+            }
+        }
+    }
+    UpgradeShow();
 }
-
 
 function UnitInit(){
     //name, baseCost, cps, known
     units[0] = new Unit("Peasant", 16, 1, true, 0);
-    units[1] = new Unit("Brute", 130, 16, true, 0);
+    units[1] = new Unit("Brute", 130, 16, false, 0);
     units[2] = new Unit("Spearman", 1280, 80, false, 0);
     units[3] = new Unit("Knight", 15600, 490, false, 0);
     units[4] = new Unit("Bowman", 233000, 3600, false, 0);
@@ -98,7 +139,18 @@ function UnitInit(){
     units[16] = new Unit("ICBM", 196732040380000000000000, 750473180000000000, false, 0);
     units[17] = new Unit("Mecha", 9892098278300000000000000, 18867680100000000000, false, 0);
     units[18] = new Unit("Death ray", 524288000000000000000000000, 500000000000000000000, false, 0);
+    
+}
 
+function UpgradeInit() {
+    //name, cost, type, unitID, amount, known, desc
+    for(var i = 0; i < units.length; i++){
+        var u = units[i];
+        for(var j = 0; j < 4; j++){
+            Upgrades.push(
+                new Upgrade(u.name + " lvl " + (j+1), 1, "Unit", i, j+1, true, "+" + (100) + "% raiding power for " + u.name));
+        }
+    }
 }
 
 
@@ -122,7 +174,6 @@ function ClickStyle() {
     coinIMG.style.width = 200 + "px";
     coinIMG.style.height = 200 + "px";
 }
-
 
 
 function UpdateCoinTexts() {
@@ -151,32 +202,216 @@ function UpdateCPS() {
     document.getElementById("cps1").innerHTML = cpsText;
 }
 
+function UnitArrayTest () {
+    
+    if(unitCosts.length < units.length){
+         unitCosts = [];
+        for(var i = 0; i < units.length; i++){
+            unitCosts.push(document.getElementById("UnitCost" + i));
+        }
+    }
+    if(unitCPSs.length < units.length){
+        unitCPSs = [];
+        for(var j = 0; j < units.length; j++){
+            unitCPSs.push(document.getElementById("UnitCPS" + j));
+        }
+    }
+    if(unitNums.length < units.length){
+        unitNums = [];
+        for(var k = 0; k < units.length; k++){
+            unitNums.push(document.getElementById("UnitNum" + k));
+        }
+    }
+    if(unitUPs.length < units.length){
+        unitUPs = [];
+        for(var l = 0; l < units.length; l++){
+            unitUPs.push(document.getElementById("UnitUP" + l));
+        }
+    }
+}
 
-function UpdateUnitStuff() {
+function UpgradeArrayTest () {
+    
+    if(UpgradeCosts.length < Upgrades.length){
+        UpgradeCosts = [];
+        for(var i = 0; i < Upgrades.length; i++){
+            UpgradeCosts.push(document.getElementById("Upgr" + i));
+        }
+    }
+    
+}
+
+function UpdateUnitStuff() {  
+    UnitArrayTest();
     
     for(var i = 0; i < units.length; i++) {
-        var u = units[i];
-        
+        var u = units[i];        
         if(u.known){
-            var c = document.getElementById("UnitCost" + i);
+            var c = unitCosts[i];
             c.innerHTML = "Cost: " + format(u.cost2(buyAmount));
             if(coins - u.cost2(buyAmount) >= 0){
-                c.style.color = "#00c129";
+                c.style.color = "#42f45f";
             }
             else{
                 c.style.color = "#ff0000";
             } 
-            document.getElementById("UnitCPS" + i).innerHTML = "CPS: " + format(u.cps);
-            document.getElementById("UnitNum" + i).innerHTML = "Owned: " + format(u.num);
+            if(u.num > 0){                
+                unitCPSs[i].innerHTML = "CPS: " + format(u.ccps());
+            }
+            else {
+                unitCPSs[i].innerHTML = "CPS: " + format(u.cps);
+            }
+            unitUPs[i].innerHTML = "Upgrades: " + u.Upgrades;
+            unitNums[i].innerHTML = "Owned: " + format(u.num);
         }
-        //document.getElementById("UnitName" + i).innerHTML = units[i].name;
+    }
+}
+
+function tick(){ 
+    if(run){       
+        CalcCPS();    
+        var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
+        var ccps = (cps / (1000 / tickTime)) * deltaTime;    
+        coins += ccps; 
+        lastTickTime = parseInt(Date.now());
+    }
+}
+
+function update(){
+    var radios = document.getElementsByName('amount');
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            // do whatever you want with the checked radio
+            buyAmount = parseInt(radios[i].value);
+
+            // only one radio can be logically checked, don't check the rest
+            break;
+        }
+    }
+    UpdateCoinTexts();
+    UpdateCPS(); 
+    UpdateUnitStuff();
+    UpdateUpgradeStuff();
+    UpgradeShow();
+    document.getElementById("clicksC").innerHTML = (clickCount * clickM) + " coins from clicks per second";
+}
+
+function Save(){
+    localStorage.setItem("coin", coins);
+    localStorage.setItem("cps", cps);
+    localStorage.setItem("lastTick", lastTickTime);
+    for(var i = 0; i < units.length; i++){
+        localStorage.setItem("unit" + i, units[i].num);
+        localStorage.setItem("unit" + i + "Upgrades", units[i].Upgrades);
+    }
+    
+    for(var j = 0; j < Upgrades.length; j++) {
+        localStorage.setItem("Upgrade" + j, Upgrades[j].activated);
+    }
+    
+}
+
+function Load(){
+    coins = parseFloat(localStorage.getItem("coin"));
+    cps = parseFloat(localStorage.getItem("cps"));
+    lastTickTime = parseInt(localStorage.getItem("lastTick"));
+    for(var i = 0; i < units.length; i++){
+        units[i].num = parseInt(localStorage.getItem("unit" + i));
+        units[i].Upgrades = parseInt(localStorage.getItem("unit" + i + "Upgrades"));
+    }
+    for(var j = 0; j < Upgrades.length; j++) {
+        Upgrades[j].activated = localStorage.getItem("Upgrade" + j) == "true" ? true : false;
+    }
+    
+    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
+    var ccps = (cps / (1000 / tickTime)) * deltaTime;
+    if(deltaTime / 10 >= 10  && deltaTime / 10 <= 3600){
+        alert("Game loaded and you got " + format(ccps) + " coins."); 
+    }
+    coins += ccps;
+    lastTickTime = Date.now();
+}
+
+function Reset(){
+    localStorage.setItem("coin", 0);
+    localStorage.setItem("cps", 0);
+    for(var i = 0; i < units.length; i++){
+        localStorage.setItem("unit" + i, 0);
+        localStorage.setItem("unit" + i + "Upgrades", 0);
+        if(i != 0){
+            units[i].known = false;
+        }
+    }
+    for(var j = 0; j < Upgrades.length; j++) {
+        localStorage.setItem("Upgrade" + j, false);
+    }
+    
+    Load();
+    localStorage.setItem("lastTick", Date.now());
+    UnitShow();
+}
+
+function CalcCPS(){
+    cps = 0;
+    for(var i = 0; i < units.length; i++){
+        cps += units[i].ccps();
+    }
+    cps *= clickingBonus;
+}
+
+function UnitShow() {
+    UnitArrayTest();
+    
+    for(var i = 0; i < units.length; i++) {
+        var u = units[i];
+        if(i !== 0 && units[i-1].num > 0){
+            u.known = true;
+        }
+        if(u.known){
+            document.getElementById("UnitName" + i).innerHTML = u.name;
+            var k = document.getElementById("U"+i);
+            k.className = "UnitA";
+            document.getElementById("UD" + i).className = "UnitDiv";
+        }
+        else if(i !== 0 && units[i-1].known){
+            document.getElementById("UnitName" + i).innerHTML = "???";
+            var a = document.getElementById("U"+i);
+            a.className = "";
+            var c = unitCosts[i];
+            c.innerHTML = "Cost: ???";
+            c.style.color = "black";
+            unitCPSs[i].innerHTML = "CPS: ???";
+            unitNums[i].innerHTML = "Owned: ???";
+            unitUPs[i].innerHTML = "Upgrades: ???";
+            document.getElementById("UD" + i).className = "UnitDivUnknown";
+        }
+        else{
+            var f = document.getElementById("U"+i);
+            f.className = "";
+            f.className += "DisabledUnitA";
+        }
+        
+    }
+}
+
+function SelectMainWindow (num, title){
+    
+    document.getElementById("D2Title").innerHTML = title;
+    for(var i = 0; i < 5; i++){
+        if(num != i){
+            document.getElementById("Main2W"+i).className += " DisabledMain2";
+        }
+        else{
+            document.getElementById("Main2W"+i).className -= " DisabledMain2";
+        }
     }
 }
 
 function format(value) {
     var text = "";
     if(value < 1000000){
-        text = numeral(value).format("0,000");
+        text = addCommas(value);
     }
     else{
         
@@ -185,6 +420,15 @@ function format(value) {
     return text;
 }
 
+function addCommas(n){
+    var rx = /(\d+)(\d{3})/;
+    return String(Math.round(n)).replace(/^\d+/, function(w){
+        while(rx.test(w)){
+            w = w.replace(rx, '$1,$2');
+        }
+        return w;
+    });
+}
 
 function nFormatter(num, digits) {
   var si = [
@@ -220,148 +464,141 @@ function nFormatter(num, digits) {
 }
 
 
-
-
-function tick(){ 
-    if(run){       
-        CalcCPS();    
-        var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
-        var ccps = (cps / (1000 / tickTime)) * deltaTime;    
-        coins += ccps; 
-        lastTickTime = parseInt(Date.now());   
-        Save(); 
+function createUnit(unitID) {
+    if(UnitOuterDiv == null){
+        UnitOuterDiv = document.getElementById("UnitOuterDiv");
     }
-}
-
-function update(){
-    var radios = document.getElementsByName('amount');
-
-    for (var i = 0, length = radios.length; i < length; i++) {
-        if (radios[i].checked) {
-            // do whatever you want with the checked radio
-            buyAmount = parseInt(radios[i].value);
-
-            // only one radio can be logically checked, don't check the rest
-            break;
-        }
-    }
-    UpdateCoinTexts();
-    UpdateCPS(); 
-    UpdateUnitStuff();
-    document.getElementById("clicksC").innerHTML = (clickCount * clickM) + " coins from clicks per second";
-}
-
-
-
-
-function Save(){
-    localStorage.setItem("coin", coins);
-    localStorage.setItem("cps", cps);
-    localStorage.setItem("lastTick", lastTickTime);
-    for(var i = 0; i < units.length; i++){
-        localStorage.setItem("unit" + i, units[i].num);
-    }
+    var a = document.createElement("a");
+        a.setAttribute("id", "U" + unitID);
+        a.setAttribute("onclick", "BuyUnit(" + unitID + ")");
+        UnitOuterDiv.appendChild(a);
+    var div1 = document.createElement("div");
+        a.appendChild(div1);
+        div1.className = "UnitDiv";
+        div1.setAttribute("id", "UD" + unitID);
+    var table = document.createElement("table");
+        div1.appendChild(table);
+        table.className = "UnitTable";
+    
+    var trTitle = document.createElement("tr");
+        table.appendChild(trTitle);
+    
+    var tdTitle = document.createElement("td");
+        trTitle.appendChild(tdTitle);
+        tdTitle.setAttribute("colspan", "4");
+    
+    var pTitle = document.createElement("p");
+        tdTitle.appendChild(pTitle);
+        pTitle.setAttribute("id", "UnitName" + unitID);
+        pTitle.className = "UnitP";
+    
+    var trInfo = document.createElement("tr");
+        table.appendChild(trInfo);
+    
+    var tdCost = document.createElement("td");
+        trInfo.appendChild(tdCost);
+    var spanCost = document.createElement("span");
+        tdCost.appendChild(spanCost);
+        spanCost.setAttribute("id", "UnitCost" + unitID);
+    
+    var tdCPS = document.createElement("td");
+        trInfo.appendChild(tdCPS);
+    var spanCPS = document.createElement("span");
+        tdCPS.appendChild(spanCPS);
+        spanCPS.setAttribute("id", "UnitCPS" + unitID);
+    
+    
+    var tdUP = document.createElement("td");
+        trInfo.appendChild(tdUP);
+    var spanUP = document.createElement("span");
+        tdUP.appendChild(spanUP);
+        spanUP.setAttribute("id", "UnitUP" + unitID);    
+    
+    var tdNum = document.createElement("td");
+        trInfo.appendChild(tdNum);
+    var spanNum = document.createElement("span");
+        tdNum.appendChild(spanNum);
+        spanNum.setAttribute("id", "UnitNum" + unitID);
     
 }
 
-function Load(){
-    coins = parseFloat(localStorage.getItem("coin"));
-    cps = parseFloat(localStorage.getItem("cps"));
-    lastTickTime = parseInt(localStorage.getItem("lastTick"));
-    for(var i = 0; i < units.length; i++){
-        units[i].num = parseInt(localStorage.getItem("unit" + i));
-    }
-    
-    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
-    var ccps = (cps / (1000 / tickTime)) * deltaTime;
-    if(deltaTime / 10 >= 10  && deltaTime * 10 <= 3600){
-        alert("Game loaded and you got " + format(ccps) + " coins after being away for " + Math.round(deltaTime / 1000 * tickTime) + " seconds."); 
-    }
-    coins += ccps;
-    lastTickTime = Date.now();
-}
-
-
-function Reset(){
-    localStorage.setItem("coin", 0);
-    localStorage.setItem("cps", 0);
-    for(var i = 0; i < units.length; i++){
-        localStorage.setItem("unit" + i, 0);
-    }
-    Load();
-    localStorage.setItem("lastTick", Date.now());
-}
-
-function CalcCPS(){
-    cps = 0;
-    for(var i = 0; i < units.length; i++){
-        cps += units[i].ccps();
-    }
-    cps *= clickingBonus;
-}
-
-
-
-
-UnitInit();
-Load();
-setInterval(update, 100);
-setInterval(tick, tickTime);
-
-
-function UnitShow() {
+function UnitStuffGen() {
     for(var i = 0; i < units.length; i++) {
-        var u = units[i];
-        if(i !== 0 && units[i-1].num > 0){
-            u.known = true;
-        }
-        if(u.known){
-            document.getElementById("UnitName" + i).innerHTML = u.name;
-            var k = document.getElementById("U"+i);
-            k.className = "UnitA";
-            document.getElementById("UD" + i).className = "UnitDiv";
-        }
-        else if(i !== 0 && units[i-1].known){
-            document.getElementById("UnitName" + i).innerHTML = "???";
-            var a = document.getElementById("U"+i);
-            a.className = "";
-            var c = document.getElementById("UnitCost" + i);
-            c.innerHTML = "Cost: ???";
-            document.getElementById("UnitCPS" + i).innerHTML = "CPS: ???";
-            document.getElementById("UnitNum" + i).innerHTML = "Owned: ???";
-            document.getElementById("UD" + i).className = "UnitDivUnknown";
-        }
-        else{
-            var f = document.getElementById("U"+i);
-            f.className = "";
-            f.className += "DisabledUnitA";
+        createUnit(i);
+    }   
+    UnitShow();
+}
+
+function UpgradeShow() {
+    UpgradeArrayTest();
+    
+    for(var i = 0; i < Upgrades.length; i++) {
+        var u = Upgrades[i];
+        if(u.unit.num == 0 || u.activated || u.unit.Upgrades + 1 != u.amount) {            
+            document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
+        }else {
+            document.getElementById("Upgrade" + i).className = "Upgrade";
         }
         
     }
 }
 
-function SelectMainWindow (num, title)
-{
-    document.getElementById("D2Title").innerHTML = title;
-    for(var i = 0; i < 4; i++){
-        if(num != i){
-            document.getElementById("Main2W"+i).className += " DisabledMain2";
+
+function UpdateUpgradeStuff() {
+    UpgradeArrayTest();
+    for(var i = 0; i < Upgrades.length; i++) {
+        var u = Upgrades[i];
+        if(u.known && !u.activated){
+            var c = UpgradeCosts[i];
+            if(u.unit.num > 0) {
+                c.innerHTML = "Cost: " + format(u.cost2());
+            }
+            if(coins - u.cost2() >= 0){
+                c.style.color = "#42f45f";
+            }
+            else{
+                c.style.color = "#ff0000";
+            }
         }
-        else{
-            document.getElementById("Main2W"+i).className -= " DisabledMain2";
-        }
-    }
+    } 
 }
 
 
+function createUpgrade (UpgradeID) {
+    if(UpgradeOuterDiv == null) {
+        UpgradeOuterDiv = document.getElementById("UpgradeOuterDiv");
+    }
+    var u = Upgrades[UpgradeID];
+    var a = document.createElement("a");
+        a.setAttribute("onclick", "BuyUpgrade(" + UpgradeID + ")");
+        UpgradeOuterDiv.appendChild(a);
+        a.className = "Upgrade";
+        a.setAttribute("id", "Upgrade" + UpgradeID);
+    var h5 = document.createElement("h5");
+        a.appendChild(h5);
+        h5.innerHTML = u.name;
+    var h6 = document.createElement("h6");
+        a.appendChild(h6);
+        h6.innerHTML = u.desc;
+    var span = document.createElement("span");
+        a.appendChild(span);
+        span.innerHTML = format(u.cost);
+        span.setAttribute("id", "Upgr" + UpgradeID);
+}
+
+function UpgradeGenStuff() {
+    for(var i = 0; i < Upgrades.length; i++) {
+        createUpgrade(i);
+    }
+    
+}
 
 
-
-
-
-
-
-
-
-
-setTimeout(UnitShow, 100);
+UnitInit();
+UpgradeInit();
+Load();
+setTimeout(UnitStuffGen, 100);
+setTimeout(UpgradeGenStuff, 100);
+setInterval(update, 100);
+setInterval(tick, tickTime);
+setInterval(Save, 1500);

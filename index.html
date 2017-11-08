@@ -13,7 +13,7 @@
 </head>
 
 <body onbeforeunload="Save()">
-    <div class="header">Army Clicker <span style="margin-left: 40px">Build an army for raiding villages and aquire more coins!</span></div>
+    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins!</span></div>
   <div class="container">
         <div class="main1 noselect">
             <h1>Coins</h1>
@@ -28,25 +28,37 @@
             <div id="Main2Selector" class="Main2Selector">
                 
                 <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
-                <button onclick="SelectMainWindow(1, 'Achievements')">Achievements</button>
-                <button onclick="SelectMainWindow(2, 'Raid')">Raid</button>
-                <button onclick="SelectMainWindow(3, 'Options')">Options</button>
+                <button onclick="SelectMainWindow(1, 'Upgrades')">Upgrades</button>
+                <button onclick="SelectMainWindow(2, 'Commander')">Commander</button>
+                <button onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
+                <button onclick="SelectMainWindow(4, 'Options')">Options</button>
                 
                 <h1 id="D2Title">Overview</h1>
             </div>
             
             <div id="Main2Container" class="Main2Container">
             
+                <!--Overview-->
                 <div id="Main2W0" class="">
                 </div>
                 
+                <!--Upgrades-->
                 <div id="Main2W1" class="DisabledMain2">
+                    <div id="UpgradeOuterDiv" class="UpgradeDiv">
+                        
+                    </div>                    
                 </div>
                 
+                <!--Commander-->
                 <div id="Main2W2" class="DisabledMain2">
                 </div>
                 
-                <div id="Main2W3" class="Options DisabledMain2">
+                <!--Achievments-->
+                <div id="Main2W3" class="DisabledMain2">
+                </div>
+                
+                <!--Options-->
+                <div id="Main2W4" class="Options DisabledMain2">
                     <button onclick="Save()">Save</button>
                     <button onclick="Load()">Load</button>
                     <button onclick="Reset()">Reset</button>
@@ -67,461 +79,8 @@
                 </form>            
             </div>
             
-            <div>
-            <!--Unit start-->
-            <a onclick="BuyUnit(0)" id="U0" class="">
-                <div class="UnitDiv" id="UD0">                
-                    <table class="UnitTable">
-                        <tr>
-                            <td colspan="3"><p id="UnitName0" class="UnitP">Peasant</p></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span id="UnitCost0">Cost: 0</span>
-                            </td>
-                            <td>
-                                <span id="UnitCPS0">CPS: 0</span>
-                            </td>
-                            <td>
-                                <span id="UnitNum0">Owned: 0</span>
-                            </td>
-                        </tr>
-
-                    </table>
-                </div>
-            </a>
-            <!--Unit end-->
+            <div id="UnitOuterDiv" class="UnitOuterDiv">
             
-            <!--Unit start-->
-            <a onclick="BuyUnit(1)" id="U1">
-                <div class="UnitDiv" id="UD1">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName1" class="UnitP">Brute</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost1">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS1">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum1">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(2)" id="U2">
-                <div class="UnitDiv" id="UD2">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName2" class="UnitP">Spearman</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost2">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS2">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum2">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(3)" id="U3">
-                <div class="UnitDiv" id="UD3">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName3" class="UnitP">Knight</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost3">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS3">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum3">Owned: 0</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(4)" id="U4">
-                <div class="UnitDiv" id="UD4">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName4" class="UnitP">Bowman</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost4">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS4">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum4">Owned: 0</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(5)" id="U5">
-                <div class="UnitDiv" id="UD5">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName5" class="UnitP">Musketeer</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost5">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS5">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum5">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(6)" id="U6">
-                <div class="UnitDiv" id="UD6">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName6" class="UnitP">Rifleman</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost6">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS6">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum6">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(7)" id="U7">
-                <div class="UnitDiv" id="UD7">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName7" class="UnitP">Marine</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost7">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS7">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum7">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(8)" id="U8">
-                <div class="UnitDiv" id="UD8">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName8" class="UnitP">Swat</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost8">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS8">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum8">Owned: 0</span>
-                        </td>
-                    </tr>
-                    <tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(9)" id="U9">
-                <div class="UnitDiv" id="UD9">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName9" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost9">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS9">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum9">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(10)" id="U10">
-                <div class="UnitDiv" id="UD10">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName10" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost10">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS10">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum10">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(11)" id="U11">
-                <div class="UnitDiv" id="UD11">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName11" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost11">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS11">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum11">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end--> 
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(12)" id="U12">
-                <div class="UnitDiv" id="UD12">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName12" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost12">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS12">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum12">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(13)" id="U13">
-                <div class="UnitDiv" id="UD13">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName13" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost13">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS13">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum13">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(14)" id="U14">
-                <div class="UnitDiv" id="UD14">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName14" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost14">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS14">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum14">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(15)" id="U15">
-                <div class="UnitDiv" id="UD15">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName15" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost15">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS15">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum15">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(16)" id="U16">
-                <div class="UnitDiv" id="UD16">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName16" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost16">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS16">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum16">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(17)" id="U17">
-                <div class="UnitDiv" id="UD17">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName17" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost17">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS17">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum17">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
-            
-            <!--Unit start-->
-            <a onclick="BuyUnit(18)" id="U18">
-                <div class="UnitDiv" id="UD18">                
-                <table class="UnitTable">
-                    <tr>
-                        <td colspan="3"><p id="UnitName18" class="UnitP">Cannon</p></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span id="UnitCost18">Cost: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitCPS18">CPS: 0</span>
-                        </td>
-                        <td>
-                            <span id="UnitNum18">Owned: 0</span>
-                        </td>
-                    </tr>
-                
-                </table>
-            </div>
-            </a>
-            <!--Unit end-->
             
             </div>                  
         </div>
