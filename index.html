@@ -8,12 +8,11 @@
     <link rel="stylesheet" href="styles.css">
     <script src="numeral.js"></script>
     <script src="script.js"></script>
-    <script src="commander.js"></script>
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
 </head>
 
 <body onbeforeunload="Save()">
-    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins!</span></div>
+    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins! v0.3</span></div>
   <div class="container">
         <div class="main1 noselect">
             <h1>Coins</h1>
@@ -51,12 +50,15 @@
                 
                 <!--Commander-->
                 <div id="Main2W2" class="DisabledMain2 Main2">
-                    <p>Commander Level:<span> 0</span></p>
-                    <p>Commander Reputation:<span> 0</span></p>
+                    <h5>Your commander can manage your army while you are away.
+                        The more reputation he has the longer your army collects coins.</h5>
+                    <p>Commander Level: <span id="CommanderLevel"> 0</span></p>
+                    <p>Commander Reputation: <span id="CommanderRep"> 0</span></p>
                     <br>
-                    <button>Upgrade Commander</button>
-                    <p>Your commander can manage your army while you are away.
-                        The more reputation he has the longer your army collects coins.</p>
+                    <button onclick="c.upgrade()">Upgrade Commander </button>
+                    <br>
+                    <p>Cost: <span id="CommanderCurrentCost"></span></p>
+                    <p><span id="CommanderCurrentTime"></span></p>
                 </div>
                 
                 <!--Achievments-->
@@ -68,15 +70,12 @@
                     <button onclick="Save()">Save</button>
                     <button onclick="Load()">Load</button>
                     <button onclick="Reset()">Reset</button>
-                </div>
-            
+                </div>                
             </div>
-            
-
           </div>
         <div class="main3 noselect" id="main3">
             <h1>Store</h1>
-            
+            <h5>Buy amount:</h5>
             <div>
                 <form>
                     <label for="AmRadio1"><input type="radio" name="amount" value="1" id="AmRadio1"> 1</label>

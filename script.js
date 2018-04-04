@@ -4,6 +4,10 @@ var tickTime =  100;
 
 var coinIMG;
 
+var MainWindowNum;
+var MainWindowTitle;
+
+
 var clickCount = 0;
 var clickM = 1;
 
@@ -42,6 +46,8 @@ var unitUPs = [];
 
 
 var UpgradeCosts = [];
+
+var c = new Commander();
 
 
 function Unit(name, baseCost, cps, known, num) {
@@ -169,10 +175,76 @@ function UpgradeInit() {
     }
     
     for(var k = 0; k < 10; k++) {
-        Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "+" + (100) + "% power for clicks"));
+        Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "Doubles click strength."));
     }
 }
 
+function Commander(){
+	this.Name = "Commander";
+	this.Level = 0;
+	this.BaseUpCost = 100;
+	this.MultFactor = 1.9;
+	this.RepP = null;
+	this.LevelP = null;
+	this.TimeP = null;
+	this.CostP = null;
+
+	this.cost = function(){
+		return Math.round(this.BaseUpCost * Math.pow(this.MultFactor, this.Level));
+	};
+
+	this.updateTab = function(){
+        var rx = /(\d+)(\d{3})/;
+		if(this.LevelP == null)
+		{			
+			this.LevelP = document.getElementById("CommanderLevel");
+		}
+		this.LevelP.innerHTML = format(this.Level);
+		if(this.RepP == null)
+		{			
+			this.RepP = document.getElementById("CommanderRep");
+		}
+		this.RepP.innerHTML =  format(this.Reputation());
+		if(this.TimeP == null)
+		{			
+			this.TimeP = document.getElementById("CommanderCurrentTime");
+		}
+		this.TimeP.innerHTML = this.Reputation() > 0 ? "Current time: " + formatMins(this.currentTime() * 60) : "Your Commander has no reputation so he can't command your army.";
+		if(this.CostP == null){
+			this.CostP = document.getElementById("CommanderCurrentCost");			
+		}
+		if(this.cost() >= coins){
+			this.CostP.style.color = "#dd0000";
+		}
+		else{
+			this.CostP.style.color = "#1e9231";
+		}
+		this.CostP.innerHTML = format(this.cost());
+	};
+
+	this.currentTime = function(){
+		return Math.round(Math.log10(this.Reputation()) * 100) / 100;
+	};
+
+	this.Reputation = function(){
+        var r = 5 * Math.pow(1.3, this.Level);
+        if(r > 100 || r < -100){
+            return Math.round(r / 100) * 100;
+        }
+        else if(r > 10 || r < -10){
+            return Math.round(r / 10) * 10;
+        }
+        else{
+            return Math.round(r);
+        }    
+	}
+	this.upgrade = function(){
+		if(coins >= this.cost()){
+			coins -= this.cost();
+			this.Level++;
+		}
+	};
+}
 
 function Click() {
     clickCount++;
@@ -270,10 +342,10 @@ function UpdateUnitStuff() {
             var c = unitCosts[i];
             c.innerHTML = "Cost: " + format(u.cost2(buyAmount));
             if(coins - u.cost2(buyAmount) >= 0){
-                c.style.color = "#42f45f";
+                c.style.color = "#1e9231";
             }
             else{
-                c.style.color = "#ff0000";
+                c.style.color = "#ee0000";
             } 
             if(u.num > 0){                
                 unitCPSs[i].innerHTML = "CPS: " + format(u.ccps());
@@ -314,6 +386,7 @@ function update(){
     UpdateUnitStuff();
     UpdateUpgradeStuff();
     UpgradeShow();
+    c.updateTab();
     document.getElementById("clicksC").innerHTML = (clickCount * clickM) + " coins from clicks per second";
 }
 
@@ -325,15 +398,21 @@ function Save(){
         localStorage.setItem("unit" + i, units[i].num);
         localStorage.setItem("unit" + i + "Upgrades", units[i].Upgrades);
     }
+
     
     for(var j = 0; j < Upgrades.length; j++) {
         localStorage.setItem("Upgrade" + j, Upgrades[j].activated);
     }
     localStorage.setItem("ClickM", clickM);
     
+    localStorage.setItem("CLevel", c.Level);
+    
+    localStorage.setItem("MainWindowNum", MainWindowNum);
+    localStorage.setItem("MainWindowTitle", MainWindowTitle);
 }
 
 function Load(){
+    c.Level = parseInt(localStorage.getItem("CLevel"));
     coins = parseFloat(localStorage.getItem("coin"));
     cps = parseFloat(localStorage.getItem("cps"));
     lastTickTime = parseInt(localStorage.getItem("lastTick"));
@@ -346,11 +425,10 @@ function Load(){
     }
     clickM = parseInt(localStorage.getItem("ClickM"));
     
-    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime))/ tickTime));
-    var ccps = (cps / (1000 / tickTime)) * deltaTime;
-    if(deltaTime / 10 >= 10  && deltaTime / 10 <= 3600){
-        alert("Game loaded and you got " + format(ccps) + " coins."); 
-    }
+    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));
+    var commDeltaTime = c.currentTime() * 60000;
+    var ccps = (cps / (1000 / tickTime)) * Math.min(deltaTime, commDeltaTime);
+    alert("Game loaded and you got " + format(ccps) + " coins." + (deltaTime > commDeltaTime?"\nUpgradeyour commander for more offline time!":"")); 
     coins += ccps;
     lastTickTime = Date.now();
 }
@@ -370,6 +448,9 @@ function Reset(){
         localStorage.setItem("Upgrade" + j, false);
     }
     localStorage.setItem("lastTick", Date.now());
+    localStorage.setItem("CLevel", 0);    
+    localStorage.setItem("MainWindowNum", -1);
+    localStorage.setItem("MainWindowTitle", "");
     Load();
     UnitShow();
 }
@@ -398,19 +479,17 @@ function UnitShow() {
         else if(i !== 0 && units[i-1].known){
             document.getElementById("UnitName" + i).innerHTML = "???";
             var a = document.getElementById("U"+i);
-            a.className = "";
             var c = unitCosts[i];
             c.innerHTML = "Cost: ???";
             c.style.color = "black";
             unitCPSs[i].innerHTML = "CPS: ???";
-            unitNums[i].innerHTML = "Owned: ???";
-            unitUPs[i].innerHTML = "Upgrades: ???";
+            unitNums[i].innerHTML = "Owned: 0";
+            unitUPs[i].innerHTML = "Upgrades: 0";
             document.getElementById("UD" + i).className = "UnitDivUnknown";
         }
         else{
             var f = document.getElementById("U"+i);
-            f.className = "";
-            f.className += "DisabledUnitA";
+            f.className = "DisabledUnitA";
         }
         
     }
@@ -418,26 +497,62 @@ function UnitShow() {
 
 function SelectMainWindow (num, title){    
     document.getElementById("D2Title").innerHTML = title;
+    MainWindowNum = num;
+    MainWindowTitle = title;
     for(var i = 0; i < 5; i++){
         if(num != i){
-            document.getElementById("Main2W"+i).className += " DisabledMain2";
+            document.getElementById("Main2W"+i).classList.add("DisabledMain2");
+            document.getElementById("Main2W"+i).classList.remove("Main2");
         }
         else{
-            document.getElementById("Main2W"+i).className -= " DisabledMain2";
+            document.getElementById("Main2W"+i).classList.remove("DisabledMain2");
+            document.getElementById("Main2W"+i).classList.add("Main2");
         }
     }
 }
+
+function formatMins(mins){
+    var dMins = mins;
+    if(mins >= 86400){
+        var days = Math.round(mins / 86400);        
+        mins %= 86400;
+        var hours = Math.round(mins / 60);
+        mins %= 60;
+        return days + " days, " + hours + " hours and " + Math.round(mins) + " mins.";
+    }
+    else if(mins >= 60){
+        var hours = Math.round(mins / 60);
+        mins %= 60;
+        return hours + " hours and " + Math.round(mins) + " mins.";
+    }
+    else{
+        return Math.round(mins) + " mins.";
+    }
+}
+
 
 function format(value) {
     var text = "";
     if(value < 1000000){
         text = addCommas(value);
     }
-    else{
-        
+    else if(value <= 10e+71){        
         text = nFormatter(value, 3);
     }
+    else{
+        text = normalFormat(value);
+    }
     return text;
+}
+
+function normalFormat(value, decimals = 3){
+    var str = String(Math.round(value));    
+    str = str.replace('.', '');
+    var first = str.substring(0,1);
+    var second = str.substring(1, Math.min(decimals + 1, str.length - 1));
+    var final = first + "." + second + "e+" + (str.length - 1);
+    return final;
+
 }
 
 function addCommas(n){
@@ -493,11 +608,11 @@ function createUnit(unitID) {
         UnitOuterDiv.appendChild(a);
     var div1 = document.createElement("div");
         a.appendChild(div1);
-        div1.className = "UnitDiv";
+        div1.classList.add("UnitDiv");
         div1.setAttribute("id", "UD" + unitID);
     var table = document.createElement("table");
         div1.appendChild(table);
-        table.className = "UnitTable";
+        table.classList.add("UnitTable");
     
     var trTitle = document.createElement("tr");
         table.appendChild(trTitle);
@@ -509,7 +624,7 @@ function createUnit(unitID) {
     var pTitle = document.createElement("p");
         tdTitle.appendChild(pTitle);
         pTitle.setAttribute("id", "UnitName" + unitID);
-        pTitle.className = "UnitP";
+        pTitle.classList.add("UnitP");
     
     var trInfo = document.createElement("tr");
         table.appendChild(trInfo);
@@ -555,18 +670,22 @@ function UpgradeShow() {
         var u = Upgrades[i];
         if(u.type == "Unit") {
             if(u.unit.num == 0 || u.activated || u.unit.Upgrades + 1 != u.amount) {
-                document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
+                document.getElementById("Upgrade" + i).classList.add("DisabledMain2");
+                document.getElementById("Upgrade" + i).classList.remove("Upgrade");
             }
             else {
-                document.getElementById("Upgrade" + i).className = "Upgrade";
+                document.getElementById("Upgrade" + i).classList.add("Upgrade");
+                document.getElementById("Upgrade" + i).classList.remove("DisabledMain2");
             } 
         } 
         else if(u.type == "Click") {
             if(u.activated || clickM != u.amount) {
-                document.getElementById("Upgrade" + i).className = "Upgrade DisabledMain2";
+                document.getElementById("Upgrade" + i).classList.add("DisabledMain2");
+                document.getElementById("Upgrade" + i).classList.remove("Upgrade");
             }
             else {
-                document.getElementById("Upgrade" + i).className = "Upgrade";
+                document.getElementById("Upgrade" + i).classList.add("Upgrade");
+                document.getElementById("Upgrade" + i).classList.remove("DisabledMain2");
             }
         }
         
@@ -589,10 +708,10 @@ function UpdateUpgradeStuff() {
                 c.innerHTML = "Cost: " + format(u.cost2());
             }
             if(coins - u.cost2() >= 0){
-                c.style.color = "#42f45f";
+                c.style.color = "#1e9231";
             }
             else{
-                c.style.color = "#ff0000";
+                c.style.color = "#ee0000";
             }
         }
     } 
@@ -606,7 +725,7 @@ function createUpgrade (UpgradeID) {
     var a = document.createElement("a");
         a.setAttribute("onclick", "BuyUpgrade(" + UpgradeID + ")");
         UpgradeOuterDiv.appendChild(a);
-        a.className = "Upgrade";
+        a.classList.add("Upgrade");
         a.setAttribute("id", "Upgrade" + UpgradeID);
     var h5 = document.createElement("h5");
         a.appendChild(h5);
@@ -627,12 +746,23 @@ function UpgradeGenStuff() {
     
 }
 
+function LoadLastPage(){
+    var n = parseInt(localStorage.getItem("MainWindowNum"));
+    var t = localStorage.getItem("MainWindowTitle");
+    if(n > -1 && t != ""){
+        SelectMainWindow(n, t);
+    }
+}
+
+
+
 
 UnitInit();
 UpgradeInit();
 Load();
+setTimeout(LoadLastPage, 100);
 setTimeout(UnitStuffGen, 100);
-setTimeout(UpgradeGenStuff, 100);
+setTimeout(UpgradeGenStuff, 10);
 setInterval(update, 100);
 setInterval(tick, tickTime);
 setInterval(Save, 1500);
