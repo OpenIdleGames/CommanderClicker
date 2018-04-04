@@ -1,6 +1,5 @@
 window.ondragstart = function() { return false; };
 
-
 var tickTime =  100;
 
 var coinIMG;
@@ -9,7 +8,6 @@ var clickCount = 0;
 var clickM = 1;
 
 var clickingBonus = 1;
-
 
 var coins = 0;
 var cps = 0;
@@ -54,9 +52,11 @@ function Unit(name, baseCost, cps, known, num) {
     this.known = known;
     this.num = num;
     this.Upgrades = 0;
-    
+    this.MultFactor = 1.15;
+    this.Reputation;
+
     this.cost = function () {
-        return Math.round(this.baseCost * Math.pow(1.15, this.num));
+        return Math.round(this.baseCost * Math.pow(this.MultFactor, this.num));
     };
     
     this.cost2 = function (num) {
@@ -64,8 +64,8 @@ function Unit(name, baseCost, cps, known, num) {
     };
     
     this.sum = function(n) {
-      return Math.round(-this.baseCost * ((1-Math.pow(1.15, n))/0.15));  
-    };
+      return Math.round(-this.baseCost * ((1-Math.pow(this.MultFactor, n))/(this.MultFactor - 1 )));  
+    }; 
     
     this.ccps = function () {
         return Math.round(this.cps * this.num * (1 + this.Upgrades));
@@ -106,7 +106,7 @@ function Upgrade(name, cost, type, unitID, amount, known, desc) {
                 }
             case "Click":
                 {
-                    return Math.pow(1024, this.amount);
+                    return Math.pow(128, this.amount);
                     break;
                 }
         }
@@ -124,7 +124,7 @@ function BuyUpgrade(id){
                 units[u.unitID].Upgrades = u.amount;
             }
             else if(u.type == "Click") {
-                clickM = u.amount + 1;
+                clickM = u.amount * 2;
             }
         }
     }
@@ -383,8 +383,7 @@ function CalcCPS(){
 }
 
 function UnitShow() {
-    UnitArrayTest();
-    
+    UnitArrayTest();    
     for(var i = 0; i < units.length; i++) {
         var u = units[i];
         if(i !== 0 && units[i-1].num > 0){
@@ -417,8 +416,7 @@ function UnitShow() {
     }
 }
 
-function SelectMainWindow (num, title){
-    
+function SelectMainWindow (num, title){    
     document.getElementById("D2Title").innerHTML = title;
     for(var i = 0; i < 5; i++){
         if(num != i){

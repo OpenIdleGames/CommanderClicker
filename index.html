@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <script src="numeral.js"></script>
     <script src="script.js"></script>
+    <script src="commander.js"></script>
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
 </head>
 
 <body onbeforeunload="Save()">
@@ -29,7 +29,7 @@
                 
                 <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
                 <button onclick="SelectMainWindow(1, 'Upgrades')">Upgrades</button>
-                <button disabled="true" onclick="SelectMainWindow(2, 'Commander')">Commander</button>
+                <button onclick="SelectMainWindow(2, 'Commander')">Commander</button>
                 <button disabled="true" onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
                 <button onclick="SelectMainWindow(4, 'Options')">Options</button>
                 
@@ -50,7 +50,13 @@
                 </div>
                 
                 <!--Commander-->
-                <div id="Main2W2" class="DisabledMain2">
+                <div id="Main2W2" class="DisabledMain2 Main2">
+                    <p>Commander Level:<span> 0</span></p>
+                    <p>Commander Reputation:<span> 0</span></p>
+                    <br>
+                    <button>Upgrade Commander</button>
+                    <p>Your commander can manage your army while you are away.
+                        The more reputation he has the longer your army collects coins.</p>
                 </div>
                 
                 <!--Achievments-->
@@ -58,7 +64,7 @@
                 </div>
                 
                 <!--Options-->
-                <div id="Main2W4" class="Options DisabledMain2">
+                <div id="Main2W4" class="DisabledMain2">
                     <button onclick="Save()">Save</button>
                     <button onclick="Load()">Load</button>
                     <button onclick="Reset()">Reset</button>
@@ -84,8 +90,6 @@
             
             </div>                  
         </div>
-            
-
   </div>
 
 </body>

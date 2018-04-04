@@ -41,6 +41,7 @@
     --activeColor: #DCDCDC;    
     --unkownColor: #60605F;
     --boxShadow: #414141;
+
     font-size: 18px;
     
 }
@@ -93,7 +94,7 @@ div {
     grid-area: main2;
     text-align: center;
     //padding: 20px;
-    border-right: 15px solid var(--lightColor);  
+    border-right: 15px solid var(--lightColor);    
     overflow-y: auto;
     //box-shadow: 10px 10px 5px var(--boxShadow);
 }
@@ -353,7 +354,9 @@ label {
     display: none;
 }
 
-
+.Main2W2ContentHolder{
+    border-top: 15px solid var(--lightColor);
+}
 
 
 
