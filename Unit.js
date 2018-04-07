@@ -207,7 +207,12 @@ function DisplayUnitUIObjects() {
             document.getElementById("UD" + i).className = "UnitDiv";
             document.getElementById("unitProdName" + i).innerHTML = u.name;
             unitOverviewTRs[i].style.display = "";
-            document.getElementById("unitProd" + i).innerHTML = format(u.CoinProd) + " (" + Math.round(u.CoinProd * 100 / AllCoinProd) + "%)";
+            if(u.CoinProd > 0 && AllCoinProd > 0){
+                document.getElementById("unitProd" + i).innerHTML = format(u.CoinProd) + " (" + Math.round(u.CoinProd * 100 / AllCoinProd) + "%)";
+            }
+            else{
+                document.getElementById("unitProd" + i).innerHTML = format(u.CoinProd) + " (" + 0 + "%)";
+            }
         }
         else if(i !== 0 && (units[i-1].known || units[i-1].num > 0)){
             document.getElementById("UnitName" + i).innerHTML = "???";
