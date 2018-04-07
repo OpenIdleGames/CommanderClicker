@@ -7,12 +7,19 @@
 
     <link rel="stylesheet" href="styles.css">
     <script src="numeral.js"></script>
+    <!--<script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>-->
+    <script src="PROPERTIES.js"></script>
+    <script src="Utils.js"></script>
+    <script src="Commander.js"></script>
+    <script src="Unit.js"></script>
+    <script src="Upgrade.js"></script>    
+    <script src="Achievement.js"></script>
     <script src="script.js"></script>
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
 </head>
 
 <body onbeforeunload="Save()">
-    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins! v0.3</span></div>
+    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins!<span id="creator"></span> <span id="version"></span> </span></div>
   <div class="container">
         <div class="main1 noselect">
             <h1>Coins</h1>
@@ -29,7 +36,7 @@
                 <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
                 <button onclick="SelectMainWindow(1, 'Upgrades')">Upgrades</button>
                 <button onclick="SelectMainWindow(2, 'Commander')">Commander</button>
-                <button disabled="true" onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
+                <button onclick="SelectMainWindow(3, 'Achievements')" disabled="true">Achievements</button>
                 <button onclick="SelectMainWindow(4, 'Options')">Options</button>
                 
                 <h1 id="D2Title">Overview</h1>
@@ -39,6 +46,23 @@
             
                 <!--Overview-->
                 <div id="Main2W0" class="">
+                    <table id="UnitOverviewTable">
+                        <tbody id="UnitOverviewTableBody">
+                            <tr>
+                                <th colspan="2">Coins produced so far</th>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Combined</td>
+                                <td id="UnitCombinedProd">0</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Clicks</td>
+                                <td id="ClickProd">0</td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+
                 </div>
                 
                 <!--Upgrades-->
@@ -81,6 +105,7 @@
                     <label for="AmRadio1"><input type="radio" name="amount" value="1" id="AmRadio1"> 1</label>
                     <label for="AmRadio2"><input type="radio" name="amount" value="10" id="AmRadio2"> 10</label>
                     <label for="AmRadio3"><input type="radio" name="amount" value="100" id="AmRadio3"> 100</label>
+                    <label for="AmRadio4"><input type="radio" name="amount" value="0" id="AmRadio4"> Max</label>
                 </form>            
             </div>
             
