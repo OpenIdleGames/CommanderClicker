@@ -201,7 +201,7 @@ function DCOMLoad(){
     coins += ccps;
 
     var mins = deltaTime/1000;
-    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinsShort(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinsShort(commDeltaTime / 60000) + " offline time!":"")); 
+    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinslong(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinslong(commDeltaTime / 60000) + " offline time!":"")); 
     //console.log(deltaTime);
 }
 
