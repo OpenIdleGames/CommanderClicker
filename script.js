@@ -195,8 +195,8 @@ function DCOMLoad(){
     coins += ccps;
 }
 
-function Reset(){
-    if(confirm("Do you really want to reset your game?")){
+function Reset(noConfirm){
+    if(noConfirm || (confirm("Do you really want to reset your game?"))){
         localStorage.setItem("coin", 0);
         localStorage.setItem("cps", 0);
         for(var i = 0; i < units.length; i++){
@@ -220,6 +220,8 @@ function Reset(){
         localStorage.setItem("PlayCounter", 0);
         Load(false);
     }
+        
+    
 }
 
 function CalculateGameTickProduction(isApplied = false, time = deltaTime){
@@ -289,7 +291,7 @@ function TryLoad(){
         localStorage.removeItem("PlayCounter");
     }
     if(localStorage.getItem("PlayCounter") === null){
-        Reset(); 
+        Reset(true); 
         alert("Thank you for playing the game. Click the coin to get started.");
         localStorage.setItem("PlayCounter", 0);
     }
