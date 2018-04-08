@@ -28,7 +28,7 @@ class Commander {
             if (this.TimeP == null) {
                 this.TimeP = document.getElementById("CommanderCurrentTime");
             }
-            this.TimeP.innerHTML = this.Reputation() > 0 ? "Current time: " + formatMinslong(this.currentTime() * 60) : "Your DCOM has no reputation so he can't command your army.";
+            this.TimeP.innerHTML = this.Reputation() > 0 ? "Current time: " + formatMinsLong(this.currentTime() * 60) : "Your DCOM has no reputation so he can't command your army.";
             if (this.CostP == null) {
                 this.CostP = document.getElementById("CommanderCurrentCost");
             }
