@@ -108,7 +108,6 @@ function GameTick(){
         coins += CalculateGameTickProduction(true, deltaTime);
         clickUnitBonus =  clickCount * (0.005 + clickLevel * 0.001);  
         lastTickTime = parseInt(Date.now());
-
     }
 }
 
@@ -179,8 +178,7 @@ function Load(applyDCOM = true){
     
     for(var j = 0; j < Upgrades.length; j++) {
         Upgrades[j].activated = localStorage.getItem("Upgrade" + j) == "true" ? true : false;
-    }
-    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));    
+    }    
     if(applyDCOM){
         DCOMLoad();
     }
@@ -188,14 +186,17 @@ function Load(applyDCOM = true){
 }
 
 function DCOMLoad(){
-    var commDeltaTime = c.currentTime() * 60000;
-    var mins = deltaTime/1000;  
+    var commDeltaTime = c.currentTime() * 60000;   
+    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime)); 
     var ccps = CalculateGameTickProduction(true, Math.min(deltaTime, commDeltaTime));
-    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMins(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMins(commDeltaTime) + " offline time!":"")); 
     coins += ccps;
+
+    var mins = deltaTime/1000;  
+    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMins(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMins(commDeltaTime) + " offline time!":"")); 
+    //console.log(deltaTime);
 }
 
-function Reset(noConfirm){
+function Reset(noConfirm = false){
     if(noConfirm || (confirm("Do you really want to reset your game?"))){
         localStorage.setItem("coin", 0);
         localStorage.setItem("cps", 0);
@@ -296,7 +297,7 @@ function TryLoad(){
         localStorage.setItem("PlayCounter", 0);
     }
     else{    
-        Load();
+        Load(true);
         var cu = localStorage.getItem("PlayCounter");
         localStorage.setItem("PlayCounter", parseInt(cu) + 1);
     }
