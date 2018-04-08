@@ -109,7 +109,7 @@ function UnitInit(){
         var costDecimals = Math.round(LogA((baseCostPart), 300)) - 1;
         var baseCost = ERound((baseCostPart), costDecimals);
 
-        var cpsPart = Math.pow(Math.exp(i), 1.355) / 4;
+        var cpsPart = Math.pow(Math.exp(i), 1.25) / 4;
         var cpsDecimals = Math.round(LogA(cpsPart, 300));
         var cps = ERound(cpsPart, cpsDecimals);
         if (i == 1){
