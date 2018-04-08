@@ -40,7 +40,7 @@ var optionsWindow;
 
 var UpgradeCosts = [];
 
-var c = new Commander(0);
+var c = new Commander(0.005);
 
 var deltaTime = 0;
 
@@ -54,7 +54,8 @@ function CalcCoinsPerClick(){
         return base;
     }
     else{
-        return base * ((ccps /  (1 + clickUnitBonus) / (20 - clickLevel)));
+        var applied = base * ((ccps /  (1 + clickUnitBonus) / (20 - clickLevel)));
+        return Math.max(base, applied);
     }    
 }
 
@@ -85,15 +86,8 @@ function ClickStyle() {
 
 function UpdateCoinTexts() {
     var cText = format(coins);
-    if(coins != 1){
-        cText += " coins";
-    }
-    else{
-        cText += " coin";        
-    }
-    
-    document.title = cText;
-    document.getElementById("coin1").innerHTML = cText;     
+    document.title = "Comdr. Clicker - " + cText + " coin(s)";
+    document.getElementById("coin1").innerHTML = cText + " coin(s)";     
     
 }
 
@@ -144,13 +138,7 @@ function GameUpdateUI(){
 }
 
 function Save(){
-    if(coins != NaN){
-        localStorage.setItem("coin", coins);
-    }
-    else{
-        //Reset();
-        console.log("Coin was NaN");
-    }
+    localStorage.setItem("coin", coins);
     localStorage.setItem("cps", cps);
     localStorage.setItem("lastTick", lastTickTime);
     for(var i = 0; i < units.length; i++){
@@ -175,7 +163,7 @@ function Save(){
 }
 
 
-function Load(){
+function Load(applyDCOM = true){
     c.Level = parseInt(localStorage.getItem("CLevel"));
     coins = parseInt(localStorage.getItem("coin"));
     lastTickTime = parseInt(localStorage.getItem("lastTick"));
@@ -192,39 +180,46 @@ function Load(){
     for(var j = 0; j < Upgrades.length; j++) {
         Upgrades[j].activated = localStorage.getItem("Upgrade" + j) == "true" ? true : false;
     }
-    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));
-    var commDeltaTime = c.currentTime() * 60000;
-    var mins = deltaTime/1000;  
-    var ccps = CalculateGameTickProduction(true, Math.min(deltaTime, commDeltaTime));
-    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMins(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more offline time!":"")); 
-    coins += ccps;
+    var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));    
+    if(applyDCOM){
+        DCOMLoad();
+    }
     lastTickTime = Date.now();
 }
 
+function DCOMLoad(){
+    var commDeltaTime = c.currentTime() * 60000;
+    var mins = deltaTime/1000;  
+    var ccps = CalculateGameTickProduction(true, Math.min(deltaTime, commDeltaTime));
+    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMins(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMins(commDeltaTime) + " offline time!":"")); 
+    coins += ccps;
+}
+
 function Reset(){
-    localStorage.setItem("coin", 0);
-    localStorage.setItem("cps", 0);
-    for(var i = 0; i < units.length; i++){
-        localStorage.setItem("unit" + i, 0);
-        localStorage.setItem("unit" + i + "Upgrades", 0);
-        localStorage.setItem("unit" + i + "Prod", 0)
-        if(i != 0){
-            units[i].known = false;
+    if(confirm("Do you really want to reset your game?")){
+        localStorage.setItem("coin", 0);
+        localStorage.setItem("cps", 0);
+        for(var i = 0; i < units.length; i++){
+            localStorage.setItem("unit" + i, 0);
+            localStorage.setItem("unit" + i + "Upgrades", 0);
+            localStorage.setItem("unit" + i + "Prod", 0)
+            if(i != 0){
+                units[i].known = false;
+            }
         }
+        localStorage.setItem("AllCoinProd", 0);
+        localStorage.setItem("ClickCoinProd", 0);
+        for(var j = 0; j < Upgrades.length; j++) {
+            localStorage.setItem("Upgrade" + j, false);
+        }
+        localStorage.setItem("lastTick", Date.now());
+        localStorage.setItem("CLevel", 0);    
+        localStorage.setItem("MainWindowNum", -1);
+        localStorage.setItem("MainWindowTitle", "");
+        localStorage.setItem("ClickUpgradeLevel", 0); 
+        localStorage.setItem("PlayCounter", 0);
+        Load(false);
     }
-    localStorage.setItem("AllCoinProd", 0);
-    localStorage.setItem("ClickCoinProd", 0);
-    for(var j = 0; j < Upgrades.length; j++) {
-        localStorage.setItem("Upgrade" + j, false);
-    }
-    localStorage.setItem("lastTick", Date.now());
-    localStorage.setItem("CLevel", 0);    
-    localStorage.setItem("MainWindowNum", -1);
-    localStorage.setItem("MainWindowTitle", "");
-    localStorage.setItem("ClickUpgradeLevel", 0);
-    Load();
-    DisplayUnitUIObjects();
-    DisplayUpgradeUIObjects();
 }
 
 function CalculateGameTickProduction(isApplied = false, time = deltaTime){
@@ -289,17 +284,37 @@ function LoadLastPage(){
     }
 }
 
+function TryLoad(){  
+    if(isNaN(localStorage.getItem("PlayCounter"))){
+        localStorage.removeItem("PlayCounter");
+    }
+    if(localStorage.getItem("PlayCounter") === null){
+        Reset(); 
+        alert("Thank you for playing the game. Click the coin to get started.");
+        localStorage.setItem("PlayCounter", 0);
+    }
+    else{    
+        Load();
+        var cu = localStorage.getItem("PlayCounter");
+        localStorage.setItem("PlayCounter", parseInt(cu) + 1);
+    }
+    setTimeout(DisplayUnitUIObjects + DisplayUpgradeUIObjects, 20);
+}
 
 WriteWelcomeMessage();
+
 UnitInit();
 UpgradeInit();
-Load();
+
+
+TryLoad();
+
 setTimeout(LoadLastPage, 100);
 setTimeout(UnitStuffGen, 100);
 setTimeout(UpgradeGenStuff, 10);
 setInterval(GameUpdateUI, 100);
 setInterval(GameTick, tickTime);
 setInterval(Save, 1500);
-setInterval(DisplayUnitUIObjects,  1000);
-setInterval(DisplayUpgradeUIObjects, 1000);
+setInterval(DisplayUnitUIObjects,  500);
+setInterval(DisplayUpgradeUIObjects, 500);
 setTimeout(start, 10);

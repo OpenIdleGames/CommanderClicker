@@ -31,7 +31,7 @@
 </head>
 
 <body onbeforeunload="Save()">
-    <div class="header">Army Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins!<span id="creator"></span> <span id="version"></span> </span></div>
+    <div class="header">Commander Clicker <span style="margin-left: 40px">Build the biggest army for raiding and gain more coins!<span id="creator"></span> <span id="version"></span> </span></div>
   <div class="container">
         <div class="main1 noselect">
             <h1>Coins</h1>
@@ -86,12 +86,14 @@
                 
                 <!--Commander-->
                 <div id="Main2W2" class="DisabledMain2 Main2">
-                    <h5>Your commander can manage your army while you are away.
+                    <h5>Your Deputy Commander (DCOM) can manage your army while you are away.
                         The more reputation he has the longer your army collects coins.</h5>
-                    <p>Commander Level: <span id="CommanderLevel"> 0</span></p>
-                    <p>Commander Reputation: <span id="CommanderRep"> 0</span></p>
+                    <p>DCOM Level: <span id="CommanderLevel"> 0</span></p>
+                    <p>DCOM Reputation: <span id="CommanderRep"> 0</span></p>
+                    <p>DCOM Click Bonus: <span id="CommanderBon"> 0</span></p>
+
                     <br>
-                    <button onclick="c.upgrade()">Upgrade Commander </button>
+                    <button onclick="c.upgrade()">Upgrade DCOM </button>
                     <br>
                     <p>Cost: <span id="CommanderCurrentCost"></span></p>
                     <p><span id="CommanderCurrentTime"></span></p>
@@ -99,6 +101,8 @@
                 
                 <!--Achievments-->
                 <div id="Main2W3" class="DisabledMain2">
+                    <h5>You get coin multipliers when you have 25, 50, 100, 250, 500, 1000 of each unit.</h5>
+                    <p>Work in Progress</p>
                 </div>
                 
                 <!--Options-->
