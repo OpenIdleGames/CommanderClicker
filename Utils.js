@@ -15,7 +15,7 @@ function LogA(num, a){
 
 
 
-function formatMins(mins){
+function formatMinsLong(mins){
     var dMins = mins;
     if(mins >= 86400){
         var days = Math.round(mins / 86400);        
@@ -45,6 +45,23 @@ function formatMins(mins){
         return Math.round(mins) + " min(s).";
     }
 }
+
+function formatMinsShort(time){
+    return pad(Math.floor(time/24/60), 4) + ":" + pad(Math.floor(time/60%24), 2) + ':' + pad(Math.round(time%60), 2);
+}
+
+function pad(num, size){ return ('000000000' + num).substr(-size); }
+
+function StorageErrorSolverAndGetter(name, defaultValue){
+    if(localStorage.getItem(name) === null){
+        localStorage.setItem(name, defaultValue);
+    }
+    if(isNaN(localStorage.getItem(name))){
+        localStorage.setItem(name, defaultValue);
+    }
+    return localStorage.getItem(name);
+}
+
 
 function ERound(value, digits = 0){
     var factor = Math.pow(10, digits);

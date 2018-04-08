@@ -43,15 +43,17 @@
             
         </div>
         <div class="main2 noselect">
+            <h1 id="D2Title">Overview</h1>
             <div id="Main2Selector" class="Main2Selector">
                 
                 <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
                 <button onclick="SelectMainWindow(1, 'Upgrades')">Upgrades</button>
                 <button onclick="SelectMainWindow(2, 'Commander')">Commander</button>
                 <button onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
+                <button onclick="SelectMainWindow(5, 'Promotion')">Promotion</button>
                 <button onclick="SelectMainWindow(4, 'Options')">Options</button>
                 
-                <h1 id="D2Title">Overview</h1>
+                
             </div>
             
             <div id="Main2Container" class="Main2Container">
@@ -93,7 +95,7 @@
                     <p>DCOM Click Bonus: <span id="CommanderBon"> 0</span></p>
 
                     <br>
-                    <button onclick="c.upgrade()">Upgrade DCOM </button>
+                    <button onclick="c.upgrade()">Upgrade DCOM</button>
                     <br>
                     <p>Cost: <span id="CommanderCurrentCost"></span></p>
                     <p><span id="CommanderCurrentTime"></span></p>
@@ -101,16 +103,30 @@
                 
                 <!--Achievments-->
                 <div id="Main2W3" class="DisabledMain2">
-                    <h5>You get coin multipliers for each unit when you have 25, 50, 100, 250, 500, 1000 it.</h5>
+                    <h5>You get coin multipliers for each unit when you have 25, 50, 100, 250, 500, 1000 of it.</h5>
                     <p>Work in Progress</p>
                 </div>
+
+                <!--Promotion-->
+                
                 
                 <!--Options-->
                 <div id="Main2W4" class="DisabledMain2">
-                    <button onclick="Save()">Save</button>
-                    <button onclick="Load()">Load</button>
                     <button onclick="Reset()">Reset</button>
-                </div>                
+                </div>   
+                
+                <div id="Main2W5" class="DisabledMain2">
+                    <h5>You did a great job!<br>You can get promoted to lead a new army. You have to start over but the government will channel more supply to your units.<br></h5>
+                    
+                    <br><br>
+                    <p>Current Supply boxes: <span id="SupplyBoxNumCurrent"> 0 </span></p>
+                    <p>Current boost:  <span id="SupplyBoxBoost"> 0 </span></p>
+                    <br>
+                    <p>Gained with promotion: <span id="SupplyBoxNumGain"> 0 </span></p>
+                    <button onclick="Promote()">Get Promotion</button>
+                    <p>You get Supply boxes based on your total coin earnings in this run.</p>  
+                    <p>3.5% boost to all coin production for each Supply box.</p>                  
+                </div>  
             </div>
           </div>
         <div class="main3 noselect" id="main3">

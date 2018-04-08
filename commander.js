@@ -28,7 +28,7 @@ class Commander {
             if (this.TimeP == null) {
                 this.TimeP = document.getElementById("CommanderCurrentTime");
             }
-            this.TimeP.innerHTML = this.Reputation() > 0 ? "Current time: " + formatMins(this.currentTime() * 60) : "Your DCOM has no reputation so he can't command your army.";
+            this.TimeP.innerHTML = this.Reputation() > 0 ? "Current time: " + formatMinsShort(this.currentTime() * 60) : "Your DCOM has no reputation so he can't command your army.";
             if (this.CostP == null) {
                 this.CostP = document.getElementById("CommanderCurrentCost");
             }
@@ -41,17 +41,15 @@ class Commander {
             if(this.BonP == null){
                 this.BonP = document.getElementById("CommanderBon");
             }
-            this.BonP.innerHTML = this.ClickBonus().toFixed(3) + "x";
+            this.BonP.innerHTML = this.CommanderClickBonus().toFixed(3) + "x";
             this.CostP.innerHTML = format(this.cost());
         };
         this.currentTime = function () {
             return Math.round(Math.log10(this.Reputation()) * 100) / 250;
         };
         this.Reputation = function () {
-            var r = 5 * Math.pow(1.3, this.Level);
-            if (r > 100 || r < -100) {
-                return Math.round(r / 10) * 10;
-            }
+            var r = 5 * Math.pow(1.5, this.Level);
+            
             return r + SumReputation();
         };
         this.upgrade = function () {
@@ -61,7 +59,7 @@ class Commander {
             }
         };
 
-        this.ClickBonus = function(){
+        this.CommanderClickBonus = function(){
             return 1 + this.CoinBonusMultiplier * this.Level;
         };
     }

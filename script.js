@@ -11,6 +11,8 @@ var clickLevel = 0;
 var clickCount = 0;
 var clickUnitBonus = 1;
 
+var supplyBoxes = 0;
+
 var coins = 0;
 
 var coinsOverflow = 0;
@@ -40,7 +42,7 @@ var optionsWindow;
 
 var UpgradeCosts = [];
 
-var c = new Commander(0.005);
+var c = new Commander(0.01);
 
 var deltaTime = 0;
 
@@ -49,7 +51,7 @@ var ClickCoinProd = 0;
 
 function CalcCoinsPerClick(){
     var ccps = CalculateGameTickProduction(false, deltaTime);  
-    var base = 1 * c.ClickBonus() * (1 + clickLevel);
+    var base = 1 * c.CommanderClickBonus() * Math.pow(1.3, clickLevel);
     if(ccps == 0){
         return base;
     }
@@ -60,10 +62,10 @@ function CalcCoinsPerClick(){
 }
 
 function Click() {
-    clickCount = Clamp(clickCount + 1, 0, 20);
+    clickCount = Clamp(clickCount + 1, 0, 15);
     setTimeout(ClickMin,1000);
-    var clickCoins = CalcCoinsPerClick()  * clickCount;
-    coins += clickCoins;
+    var clickCoins = CalcCoinsPerClick()  * clickCount * (1 + GetSupplyBonus());
+    coins += clickCoins ;
     ClickCoinProd += clickCoins;
     AllCoinProd += clickCoins;
     UpdateCoinTexts();
@@ -75,7 +77,7 @@ function Click() {
 }
 
 function ClickMin() {
-    clickCount = Clamp(clickCount - 1, 0, 20);
+    clickCount = Clamp(clickCount - 1, 0, 15);
 }
 
 function ClickStyle() {
@@ -86,13 +88,13 @@ function ClickStyle() {
 
 function UpdateCoinTexts() {
     var cText = format(coins);
-    document.title = "Comdr. Clicker - " + cText + " coin(s)";
+    document.title = cText + " coin(s)" + " - Comdr. Clicker";
     document.getElementById("coin1").innerHTML = cText + " coin(s)";     
     
 }
 
 function UpdateCPS() {    
-    var cpsText = format(( CalculateNormalCPS() + CalcCoinsPerClick() * clickCount));
+    var cpsText = format(( CalculateNormalCPS()  * (1 + GetSupplyBonus()) + CalcCoinsPerClick() * clickCount   * (1 + GetSupplyBonus())));
     if(cps != 1){
         cpsText += " per second";
     }
@@ -133,13 +135,19 @@ function GameUpdateUI(){
     else{
         document.getElementById("ClickProd").innerHTML = 0;
     }
-    document.getElementById("clicksC").innerHTML = format(Math.round(CalcCoinsPerClick() * clickCount)) + " coins from clicks per second<br>Bonus unit production multiplier for clicks: " + (1 +clickUnitBonus).toFixed(2) + "x";
+    var clickC = CalcCoinsPerClick() * clickCount;
+    document.getElementById("clicksC").innerHTML = format(clickC) + " coins from clicks per second<br>Bonus unit production multiplier for clicks: " + (1 +clickUnitBonus).toFixed(2) + "x";
+    document.getElementById("SupplyBoxNumCurrent").innerHTML = format(supplyBoxes);
+    document.getElementById("SupplyBoxNumGain").innerHTML = format(CalcSupplyBoxGain());
+    document.getElementById("SupplyBoxBoost").innerHTML = format(GetSupplyBonus() * 100) + "%";
+
 }
 
 function Save(){
     localStorage.setItem("coin", coins);
     localStorage.setItem("cps", cps);
     localStorage.setItem("lastTick", lastTickTime);
+    localStorage.setItem("supplyBoxes", supplyBoxes);
     for(var i = 0; i < units.length; i++){
         var u = units[i];
         localStorage.setItem("unit" + i, u.num);
@@ -163,21 +171,22 @@ function Save(){
 
 
 function Load(applyDCOM = true){
-    c.Level = parseInt(localStorage.getItem("CLevel"));
-    coins = parseInt(localStorage.getItem("coin"));
-    lastTickTime = parseInt(localStorage.getItem("lastTick"));
-    clickLevel = parseInt(localStorage.getItem("ClickUpgradeLevel"));
+    c.Level = parseInt(StorageErrorSolverAndGetter("CLevel", 0));
+    coins = parseInt(StorageErrorSolverAndGetter("coin", 0));
+    lastTickTime = parseInt(StorageErrorSolverAndGetter("lastTick", 0));
+    clickLevel = parseInt(StorageErrorSolverAndGetter("ClickUpgradeLevel", 0));
+    supplyBoxes = parseInt(StorageErrorSolverAndGetter("supplyBoxes", 0));
     for(var i = 0; i < units.length; i++){
         var u = units[i];
-        u.num = parseInt(localStorage.getItem("unit" + i));
-        u.Upgrades = parseInt(localStorage.getItem("unit" + i + "Upgrades"));
-        u.CoinProd = parseInt(localStorage.getItem("unit" + i + "Prod"));
+        u.num = parseInt(StorageErrorSolverAndGetter("unit" + i, 0));
+        u.Upgrades = parseInt(StorageErrorSolverAndGetter("unit" + i + "Upgrades", 0));
+        u.CoinProd = parseInt(StorageErrorSolverAndGetter("unit" + i + "Prod", 0));
     }
-    AllCoinProd = parseInt(localStorage.getItem("AllCoinProd"));
-    ClickCoinProd = parseInt(localStorage.getItem("ClickCoinProd"));
+    AllCoinProd = parseInt(StorageErrorSolverAndGetter("AllCoinProd", 0));
+    ClickCoinProd = parseInt(StorageErrorSolverAndGetter("ClickCoinProd", 0));
     
     for(var j = 0; j < Upgrades.length; j++) {
-        Upgrades[j].activated = localStorage.getItem("Upgrade" + j) == "true" ? true : false;
+        Upgrades[j].activated = StorageErrorSolverAndGetter("Upgrade" + j, false) == "true" ? true : false;
     }    
     if(applyDCOM){
         DCOMLoad();
@@ -191,8 +200,8 @@ function DCOMLoad(){
     var ccps = CalculateGameTickProduction(true, Math.min(deltaTime, commDeltaTime));
     coins += ccps;
 
-    var mins = deltaTime/1000;  
-    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMins(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMins(commDeltaTime) + " offline time!":"")); 
+    var mins = deltaTime/1000;
+    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinsShort(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinsShort(commDeltaTime / 60000) + " offline time!":"")); 
     //console.log(deltaTime);
 }
 
@@ -200,6 +209,9 @@ function Reset(noConfirm = false){
     if(noConfirm || (confirm("Do you really want to reset your game?"))){
         localStorage.setItem("coin", 0);
         localStorage.setItem("cps", 0);
+        if(noConfirm || confirm("Do you want to reset you Supply boxes too?")){            
+            localStorage.setItem("supplyBoxes", 0);
+        }
         for(var i = 0; i < units.length; i++){
             localStorage.setItem("unit" + i, 0);
             localStorage.setItem("unit" + i + "Upgrades", 0);
@@ -225,12 +237,46 @@ function Reset(noConfirm = false){
     
 }
 
+function CalcSupplyBoxGain(){
+    return Math.round(Math.pow(AllCoinProd / 10e5, 0.3));
+}
+
+function Promote(){
+    if(confirm("Do you really want to promote?")){
+        supplyBoxes += CalcSupplyBoxGain();
+        localStorage.setItem("supplyBoxes", supplyBoxes);
+        localStorage.setItem("coin", 0);
+        localStorage.setItem("cps", 0);
+        for(var i = 0; i < units.length; i++){
+            localStorage.setItem("unit" + i, 0);
+            localStorage.setItem("unit" + i + "Upgrades", 0);
+            localStorage.setItem("unit" + i + "Prod", 0)
+            if(i != 0){
+                units[i].known = false;
+            }
+        }
+        localStorage.setItem("AllCoinProd", 0);
+        localStorage.setItem("ClickCoinProd", 0);
+        for(var j = 0; j < Upgrades.length; j++) {
+            localStorage.setItem("Upgrade" + j, false);
+        }
+        localStorage.setItem("lastTick", Date.now());
+        localStorage.setItem("CLevel", 0);
+        localStorage.setItem("ClickUpgradeLevel", 0); 
+        Load(false);
+    }
+}
+
+function GetSupplyBonus(){
+    return supplyBoxes * 0.035;
+}
+
 function CalculateGameTickProduction(isApplied = false, time = deltaTime){
     cps = 0;
     for(var i = 0; i < units.length; i++){
         var u = units[i];
         if(u.num > 0){
-            var ct = u.ccps();
+            var ct = u.ccps() * (1 + GetSupplyBonus());
             if(isApplied){
                 u.CoinProd += ct;
                 AllCoinProd += ct;
@@ -249,7 +295,7 @@ function CalculateNormalCPS(){
             cps += u.ccps();
         }
     }
-    return Math.round(cps * (1 + clickUnitBonus));
+    return Math.round(cps * (1 + clickUnitBonus) * (1 + GetSupplyBonus()));
 }
 
 function SumReputation (){
@@ -267,7 +313,7 @@ function SelectMainWindow (num, title){
     document.getElementById("D2Title").innerHTML = title;
     MainWindowNum = num;
     MainWindowTitle = title;
-    for(var i = 0; i < 5; i++){
+    for(var i = 0; i < 6; i++){
         if(num != i){
             document.getElementById("Main2W"+i).classList.add("DisabledMain2");
             document.getElementById("Main2W"+i).classList.remove("Main2");
@@ -288,6 +334,7 @@ function LoadLastPage(){
 }
 
 function TryLoad(){  
+    StorageErrorSolverAndGetter("AllTimeStart", Date.now());
     if(isNaN(localStorage.getItem("PlayCounter"))){
         localStorage.removeItem("PlayCounter");
     }

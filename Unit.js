@@ -1,5 +1,5 @@
 
-var UnitNames = ["Peasant" , "Brute" , "Spearman" , "Knight" , "Bowman" , "Musketeer" , "Rifleman" , "Marine" , "Swat" , "Cannon" , "SAS" , "Spetznaz" , "APC" , "MBT" , "Chopper" , "Aircraft" , "ICBM" , "Mecha" , "Death ray"];
+var UnitNames = ["Peasant", "Brute", "Slinger", "Spearman", "Knight", "Archer", "Musketeer", "Frigate", "Rifleman", "Marine", "Swat", "Cannon", "SAS", "Artillery", "Spetznaz", "APC", "Battleship", "MBT", "Chopper", "Aircraft", "Cruiser", "ICBM", "Mecha", "H-bomb", "Deathray", "AM Torpedo", "USS Enterprise", "Star Destroyer", "Gravity Warper", "Reality machine"];
 
 var unitCosts = [];
 var unitCPSs = [];
@@ -7,7 +7,7 @@ var unitNums = [];
 var unitUPs = [];
 var unitProds = [];
 var unitOverviewTRs = [];
-
+var unitCCPSInfos = [];
 
 class Unit {
     constructor(id, name, baseCost, cps, known, num) {
@@ -39,7 +39,7 @@ class Unit {
             }
         };
         this.ccps = function () {
-            return Math.round(this.cps * this.num * (1 + this.Upgrades) * this.CalcAchievementMult());
+            return Math.round(this.cps * this.num * Math.pow(2, this.Upgrades) * this.CalcAchievementMult());
         };
 
         this.maxBuyable = function (){
@@ -50,7 +50,7 @@ class Unit {
         this.CalcAchievementLevel = function (){          
             for(var i = unitNumPropActivationValues.length; i >= 0; i--){
                 if(this.num >= unitNumPropActivationValues[i]){
-                    return i;
+                    return i + 1;
                 }
             }
             return 0;
@@ -65,7 +65,7 @@ class Unit {
         };
 
         this.ReputationBonus = function (){
-            return Math.pow(this.ID + 1, 2) * this.num;
+            return Math.pow(this.ID + 1, 2) * this.num * this.Upgrades;
         };
     }
 }
@@ -106,11 +106,11 @@ function UnitInit(){
             name = UnitNames[i-1];
         }
         var baseCostPart = Math.pow(Math.exp(i + 1), 2) / 5 + 5;
-        var costDecimals = Math.round(LogA((baseCostPart), 200)) - 1;
+        var costDecimals = Math.round(LogA((baseCostPart), 300)) - 1;
         var baseCost = ERound((baseCostPart), costDecimals);
 
-        var cpsPart = Math.exp(i) - 2;
-        var cpsDecimals = Math.round(LogA(cpsPart, 200));
+        var cpsPart = Math.pow(Math.exp(i), 1.355) / 4;
+        var cpsDecimals = Math.round(LogA(cpsPart, 300));
         var cps = ERound(cpsPart, cpsDecimals);
         if (i == 1){
             units[i - 1] = new Unit(i, name, baseCost, cps, true, 0);
@@ -145,14 +145,21 @@ function UnitArrayTest () {
     }
     if(unitUPs.length < units.length){
         unitUPs = [];
-        for(var l = 0; l < units.length; l++){
-            unitUPs.push(document.getElementById("UnitUP" + l));
+        for(var m = 0; m < units.length; m++){
+            unitUPs.push(document.getElementById("UnitUP" + m));
         }
     }
     if(unitProds.length < units.length){
         unitProds = [];
-        for(var l = 0; l < units.length; l++){
-            unitProds.push(document.getElementById("unitProd" + l));
+        for(var m = 0; m < units.length; m++){
+            unitProds.push(document.getElementById("unitProd" + m));
+        }
+    }
+
+    if(unitCCPSInfos.length < units.length){
+        unitCCPSInfos = [];
+        for(var n = 0; n < units.length; n++){
+            unitCCPSInfos.push(document.getElementById("UnitCCPSInfo" + n));
         }
     }
 }
@@ -185,8 +192,8 @@ function UpdateUnitStuff() {
             unitNums[i].innerHTML = "Owned: " + format(u.num) + o;
             if(u.num > 0 && AllCoinProd > 0){
                 unitProds[i].innerHTML = format(u.CoinProd) + " (" + Math.round(u.CoinProd * 100 / AllCoinProd) + "%)";                
-            }
-
+            }            
+            unitCCPSInfos[i].innerHTML = "Base CPS: " + format(u.cps) + "<span> </span>" + "<span> </span>" + " ACHM: x" + u.CalcAchievementMult() + ", UPGR: x" + format(Math.pow(2, u.Upgrades)) + ", SPLY: x" + ((1 + GetSupplyBonus())).toFixed(2);
         }
     }
 }
@@ -218,7 +225,7 @@ function DisplayUnitUIObjects() {
             document.getElementById("UnitName" + i).innerHTML = "???";
             var a = document.getElementById("U"+i);
             var c = unitCosts[i];
-            c.innerHTML = "Cost: ???";
+            c.innerHTML = "Cost: " + format(units[i].baseCost);
             c.style.color = "black";
             unitCPSs[i].innerHTML = "CPS: ???";
             unitNums[i].innerHTML = "Owned: 0";
@@ -281,8 +288,7 @@ function createUnitDisplayUIObjects(unitID) {
     var spanCPS = document.createElement("span");
         tdCPS.appendChild(spanCPS);
         spanCPS.setAttribute("id", "UnitCPS" + unitID);
-    
-    
+
     var tdUP = document.createElement("td");
         trInfo.appendChild(tdUP);
     var spanUP = document.createElement("span");
@@ -295,6 +301,18 @@ function createUnitDisplayUIObjects(unitID) {
         tdNum.appendChild(spanNum);
         spanNum.setAttribute("id", "UnitNum" + unitID);
     
+     
+    var trInfo2 = document.createElement("tr");
+        table.appendChild(trInfo2);
+        trInfo2.classList.add("UnitHoveredOpener");
+
+    var tdCCPS = document.createElement("td");
+        trInfo2.appendChild(tdCCPS);
+        tdCCPS.setAttribute("colspan", "2");
+        tdCCPS.setAttribute("id", "UnitCCPSInfo" + unitID);
+        tdCCPS.innerHTML = unitID;
+
+
 
     //create overview
     if(UnitOverviewTable == null){
@@ -312,11 +330,15 @@ function createUnitDisplayUIObjects(unitID) {
         tr.appendChild(tdProd);
         tdProd.setAttribute("id", "unitProd" + unitID);
         tdProd.innerHTML = 0;
+
+
 }
 
 function UnitStuffGen() {
     for(var i = 0; i < units.length; i++) {
         createUnitDisplayUIObjects(i);
-    }   
+    }
+    UnitOuterDiv.appendChild(document.createElement("br"));
+    UnitOuterDiv.appendChild(document.createElement("br"));
     DisplayUnitUIObjects();
 }

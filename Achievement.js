@@ -1,5 +1,5 @@
   
-var unitNumPropActivationValues = [10, 25, 50, 100, 250, 500, 1000];  
+var unitNumPropActivationValues = [25, 50, 100, 250, 500, 1000];  
 
 class Property
 {
