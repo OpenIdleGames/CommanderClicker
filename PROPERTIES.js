@@ -1,4 +1,4 @@
-var version = "v0.63";
+var version = "v0.65";
 var creator = "Prosoc";
 
 function start(){        
