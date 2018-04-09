@@ -49,42 +49,6 @@ var deltaTime = 0;
 var AllCoinProd = 0;
 var ClickCoinProd = 0;
 
-function CalcCoinsPerClick(){
-    var ccps = CalculateGameTickProduction(false, deltaTime);  
-    var base = 1 * c.CommanderClickBonus() * Math.pow(1.3, clickLevel);
-    if(ccps == 0){
-        return base;
-    }
-    else{
-        var applied = base * ((ccps /  (1 + clickUnitBonus) / (20 - clickLevel)));
-        return Math.max(base, applied);
-    }    
-}
-
-function Click() {
-    clickCount = Clamp(clickCount + 1, 0, 15);
-    setTimeout(ClickMin,1000);
-    var clickCoins = CalcCoinsPerClick()  * clickCount * (1 + GetSupplyBonus());
-    coins += clickCoins ;
-    ClickCoinProd += clickCoins;
-    AllCoinProd += clickCoins;
-    UpdateCoinTexts();
-    UpdateCPS();
-    coinIMG =  document.getElementById("coin");
-    coinIMG.style.width = 210 + "px";
-    coinIMG.style.height = 210 + "px";
-    setTimeout(ClickStyle, 40);
-}
-
-function ClickMin() {
-    clickCount = Clamp(clickCount - 1, 0, 15);
-}
-
-function ClickStyle() {
-    coinIMG.style.width = 200 + "px";
-    coinIMG.style.height = 200 + "px";
-}
-
 
 function UpdateCoinTexts() {
     var cText = format(coins);
@@ -94,7 +58,7 @@ function UpdateCoinTexts() {
 }
 
 function UpdateCPS() {    
-    var cpsText = format(( CalculateNormalCPS()  * (1 + GetSupplyBonus()) + CalcCoinsPerClick() * clickCount   * (1 + GetSupplyBonus())));
+    var cpsText = format(( CalculateNormalCPS()  * (1 + GetSupplyBonus()) + CalcCoinsPerClick() * clickCount * (1 + GetSupplyBonus())));
     if(cps != 1){
         cpsText += " per second";
     }
@@ -108,7 +72,7 @@ function GameTick(){
     if(run){       
         deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));   
         coins += CalculateGameTickProduction(true, deltaTime);
-        clickUnitBonus =  clickCount * (0.005 + clickLevel * 0.001);  
+        clickUnitBonus =  clickCount * (0.01 + clickLevel * 0.001);  
         lastTickTime = parseInt(Date.now());
     }
 }
@@ -199,9 +163,8 @@ function DCOMLoad(){
     var deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime)); 
     var ccps = CalculateGameTickProduction(true, Math.min(deltaTime, commDeltaTime));
     coins += ccps;
-
     var mins = deltaTime/1000;
-    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinsLong(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinsLong(commDeltaTime / 60000) + " offline time!":"")); 
+    alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinsLong(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinsLong(commDeltaTime / 1000) + " offline time!":"")); 
     //console.log(deltaTime);
 }
 
@@ -268,7 +231,7 @@ function Promote(){
 }
 
 function GetSupplyBonus(){
-    return supplyBoxes * 0.035;
+    return supplyBoxes * 0.03;
 }
 
 function CalculateGameTickProduction(isApplied = false, time = deltaTime){
@@ -276,7 +239,7 @@ function CalculateGameTickProduction(isApplied = false, time = deltaTime){
     for(var i = 0; i < units.length; i++){
         var u = units[i];
         if(u.num > 0){
-            var ct = u.ccps() * (1 + GetSupplyBonus());
+            var ct = Math.round(u.ccps() * (1 + GetSupplyBonus())) * (1 + clickUnitBonus) / ((1000 / tickTime) * time);
             if(isApplied){
                 u.CoinProd += ct;
                 AllCoinProd += ct;
@@ -284,8 +247,46 @@ function CalculateGameTickProduction(isApplied = false, time = deltaTime){
             cps += ct;
         }
     }
-    return Math.round((cps * (1 + clickUnitBonus) / (1000 / tickTime)) * time);
+    return Math.round(cps );
 }
+
+
+function CalcCoinsPerClick(){
+    var ccps = CalculateGameTickProduction(false, deltaTime);  
+    var base = 1 * c.CommanderClickBonus() * Math.pow(1.3, clickLevel);
+    if(ccps == 0){
+        return base;
+    }
+    else{
+        var applied = base * ((ccps /  (1 + clickUnitBonus) / (20 - clickLevel)));
+        return Math.max(base, applied);
+    }    
+}
+
+function Click() {
+    clickCount = Clamp(clickCount + 1, 0, 15);
+    setTimeout(ClickMin,1000);
+    var clickCoins = CalcCoinsPerClick()  * clickCount * (1 + GetSupplyBonus());
+    coins += clickCoins ;
+    ClickCoinProd += clickCoins;
+    AllCoinProd += clickCoins;
+    UpdateCoinTexts();
+    UpdateCPS();
+    coinIMG =  document.getElementById("coin");
+    coinIMG.style.width = 210 + "px";
+    coinIMG.style.height = 210 + "px";
+    setTimeout(ClickStyle, 40);
+}
+
+function ClickMin() {
+    clickCount = Clamp(clickCount - 1, 0, 15);
+}
+
+function ClickStyle() {
+    coinIMG.style.width = 200 + "px";
+    coinIMG.style.height = 200 + "px";
+}
+
 
 function CalculateNormalCPS(){
     var cps = 0;

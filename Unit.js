@@ -11,7 +11,7 @@ var unitCCPSInfos = [];
 
 class Unit {
     constructor(id, name, baseCost, cps, known, num) {
-        this.ID = 0;
+        this.ID = id;
         this.name = name;
         this.baseCost = baseCost;
         this.cps = cps;
@@ -61,7 +61,8 @@ class Unit {
             if(AchievementLevel == 0){
                 return 1;
             }
-            return Math.ceil(Math.pow(Math.log(Math.pow(AchievementLevel,2) + units.length - parseInt(this.ID)),(2 - 2/60 * parseInt(this.ID) + 2/30 * AchievementLevel)) / 4);
+            
+            return Math.ceil(Math.pow(Math.log(Math.pow(AchievementLevel,2) + 31 - (this.ID + 1)), (2-((2/60)*(this.ID + 1)) + ((2/30) * AchievementLevel))) / 2);
         };
 
         this.ReputationBonus = function (){
@@ -181,10 +182,10 @@ function UpdateUnitStuff() {
                 c.style.color = "#ee0000";
             } 
             if(u.num > 0){                
-                unitCPSs[i].innerHTML = "CPS: " + format(u.ccps());
+                unitCPSs[i].innerHTML = "CPS: " + format(u.ccps() * (1 + GetSupplyBonus()));
             }
             else {
-                unitCPSs[i].innerHTML = "CPS: " + format(u.cps);
+                unitCPSs[i].innerHTML = "CPS: " + format(u.cps * (1 + GetSupplyBonus()));
             }
             unitUPs[i].innerHTML = "Level: " + u.Upgrades;
             var m = u.maxBuyable();

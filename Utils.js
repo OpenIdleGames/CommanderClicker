@@ -16,38 +16,39 @@ function LogA(num, a){
 
 
 function formatMinsLong(mins){
-    var dMins = mins;
-    if(mins >= 86400){
-        var days = Math.round(mins / 86400);        
-        mins %= 86400;
-        var hours = Math.round(mins / 60);
-        mins %= 60;
-        if(Math.round(mins) == 0 && Math.round(hours) == 0){
-            return Math.round(days) + " day(s).";
+    var days = Math.floor(mins/24/60);
+    var hours = Math.floor(mins/60%24);
+    var mins = Math.round(mins%60);
+
+    if(days >= 1){
+        if(hours >= 1 && mins >= 1){
+            return Math.round(days) + " day(s), " + Math.round(hours) + " hour(s) and " + Math.round(mins) + " min(s).";
         }
-        else if(Math.round(hours) == 0){
-            return Math.round(days) + " day(s) and " + Math.round(mins) + " min(s).";
-        }
-        else if(Math.round(mins) == 0){
+        else if(hours >= 1){
             return Math.round(days) + " day(s) and " + Math.round(hours) + " hour(s).";
         }
-        return Math.round(days) + " day(s), " + Math.round(hours) + " hour(s) and " + Math.round(mins) + " min(s).";
+        else if(mins >= 1){
+            return Math.round(days) + " day(s) and " + Math.round(mins) + " min(s).";
+        }
+        else{
+            return Math.round(days) + " day(s).";
+        }
     }
-    else if(mins >= 60){
-        var hours = Math.round(mins / 60);
-        mins %= 60;
-        if(Math.round(mins) == 0){
+    else if(hours >= 1){
+        if(mins >= 1){
+            return Math.round(hours) + " hour(s) and " + Math.round(mins) + " min(s).";
+        }
+        else{
             return Math.round(hours) + " hour(s).";
         }
-        return Math.round(hours) + " hour(s) and " + Math.round(mins) + " min(s).";
     }
     else{
         return Math.round(mins) + " min(s).";
     }
 }
 
-function formatMinsShort(time){
-    return pad(Math.floor(time/24/60), 4) + ":" + pad(Math.floor(time/60%24), 2) + ':' + pad(Math.round(time%60), 2);
+function formatMinsShort(mins){
+    return pad(Math.floor(mins/24/60), 4) + ":" + pad(Math.floor(mins/60%24), 2) + ':' + pad(Math.round(mins%60), 2);
 }
 
 function pad(num, size){ return ('000000000' + num).substr(-size); }

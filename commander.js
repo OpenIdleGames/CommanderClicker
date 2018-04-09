@@ -48,9 +48,8 @@ class Commander {
             return Math.round(Math.log10(this.Reputation()) * 100) / 250;
         };
         this.Reputation = function () {
-            var r = 5 * Math.pow(1.5, this.Level);
-            
-            return r + SumReputation();
+            var r = 5 * Math.pow(1.4, this.Level);            
+            return Math.round(r) + SumReputation();
         };
         this.upgrade = function () {
             if (coins >= this.cost()) {
