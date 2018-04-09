@@ -39,7 +39,7 @@ class Unit {
             }
         };
         this.ccps = function () {
-            return Math.round(this.cps * this.num * Math.pow(2, this.Upgrades) * Math.ceil(Math.pow(1.2, this.CalcAchievementMult())));
+            return Math.round(this.cps * this.num * Math.pow(2, this.Upgrades) * Math.floor(Math.pow(1.5, this.CalcAchievementMult())));
         };
 
         this.maxBuyable = function (){
@@ -59,7 +59,7 @@ class Unit {
         this.CalcAchievementMult = function(){
             var AchievementLevel = this.CalcAchievementLevel();
             if(AchievementLevel == 0){
-                return 1;
+                return 0;
             }            
             return Math.ceil((Math.pow(Math.log(Math.pow(AchievementLevel,2) + 60 - (this.ID + 1)/3), (6-((2/200)*(this.ID + 1)) + ((2/40 * AchievementLevel)))) + 5) / 1000);
         };
