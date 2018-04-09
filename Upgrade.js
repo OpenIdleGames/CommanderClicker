@@ -15,7 +15,7 @@ class Upgrade {
             switch (this.type) {
                 case "Unit":
                     {
-                        return Math.pow(this.unit.baseCost, 1.8) * Math.pow(this.amount, this.amount);
+                        return Math.pow(this.unit.baseCost, 2) * Math.pow(this.amount, this.amount);
                         break;
                     }
                 case "Click":

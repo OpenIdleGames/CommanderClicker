@@ -39,7 +39,7 @@ class Unit {
             }
         };
         this.ccps = function () {
-            return Math.round(this.cps * this.num * Math.pow(2, this.Upgrades) * this.CalcAchievementMult());
+            return Math.round(this.cps * this.num * Math.pow(2, this.Upgrades) * Math.ceil(Math.pow(1.2, this.CalcAchievementMult())));
         };
 
         this.maxBuyable = function (){
@@ -60,9 +60,8 @@ class Unit {
             var AchievementLevel = this.CalcAchievementLevel();
             if(AchievementLevel == 0){
                 return 1;
-            }
-            
-            return Math.ceil(Math.pow(Math.log(Math.pow(AchievementLevel,2) + 31 - (this.ID + 1)), (2-((2/60)*(this.ID + 1)) + ((2/30) * AchievementLevel))) / 2);
+            }            
+            return Math.ceil((Math.pow(Math.log(Math.pow(AchievementLevel,2) + 60 - (this.ID + 1)/3), (6-((2/200)*(this.ID + 1)) + ((2/40 * AchievementLevel)))) + 5) / 1000);
         };
 
         this.ReputationBonus = function (){
@@ -194,7 +193,7 @@ function UpdateUnitStuff() {
             if(u.num > 0 && AllCoinProd > 0){
                 unitProds[i].innerHTML = format(u.CoinProd) + " (" + Math.round(u.CoinProd * 100 / AllCoinProd) + "%)";                
             }            
-            unitCCPSInfos[i].innerHTML = "Base CPS: " + format(u.cps) + "<span> </span>" + "<span> </span>" + " ACHM: x" + u.CalcAchievementMult() + ", UPGR: x" + format(Math.pow(2, u.Upgrades)) + ", SPLY: x" + ((1 + GetSupplyBonus())).toFixed(2);
+            unitCCPSInfos[i].innerHTML = "Base CPS: " + format(u.cps) + "<span> </span>" + "<span> </span>" + " ACHM: x" + Math.ceil(Math.pow(1.2, u.CalcAchievementMult())) + ", UPGR: x" + format(Math.pow(2, u.Upgrades)) + ", SPLY: x" + ((1 + GetSupplyBonus())).toFixed(2);
         }
     }
 }
