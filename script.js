@@ -165,7 +165,6 @@ function DCOMLoad(){
     coins += ccps;
     var mins = deltaTime/1000;
     alert("Game loaded and you got " + format(ccps) + " coins." + " You were away for " + (mins >= 1?formatMinsLong(mins): " less than a minute.")  + (deltaTime > commDeltaTime?"\nUpgrade your commander for more than " + formatMinsLong(commDeltaTime / 1000) + " offline time!":"")); 
-    console.log(ccps);
 }
 
 function Reset(noConfirm = false){
@@ -239,7 +238,7 @@ function CalculateGameTickProduction(isApplied = false, time = deltaTime){
     for(var i = 0; i < units.length; i++){
         var u = units[i];
         if(u.num > 0){
-            var ct = Math.round(u.ccps() * (1 + GetSupplyBonus()) * (1 + clickUnitBonus) / (1000 / tickTime) * time);
+            var ct = Math.ceil(u.ccps() * (1 + GetSupplyBonus()) * (1 + clickUnitBonus) / (1000 / tickTime) * time);
             if(isApplied){
                 u.CoinProd += ct;
                 AllCoinProd += ct;
