@@ -193,7 +193,7 @@ function UpdateUnitStuff() {
             if(u.num > 0 && AllCoinProd > 0){
                 unitProds[i].innerHTML = format(u.CoinProd) + " (" + Math.round(u.CoinProd * 100 / AllCoinProd) + "%)";                
             }            
-            unitCCPSInfos[i].innerHTML = "Base CPS: " + format(u.cps) + "<span> </span>" + "<span> </span>" + " ACHM: x" + Math.ceil(Math.pow(1.2, u.CalcAchievementMult())) + ", UPGR: x" + format(Math.pow(2, u.Upgrades)) + ", SPLY: x" + ((1 + GetSupplyBonus())).toFixed(2);
+            unitCCPSInfos[i].innerHTML = "Base CPS: " + format(u.cps) + "<span> </span>" + "<span> </span>" + " ACHM: x" + Math.floor(Math.pow(1.5, this.CalcAchievementMult())) + ", UPGR: x" + format(Math.pow(2, u.Upgrades)) + ", SPLY: x" + ((1 + GetSupplyBonus())).toFixed(2);
         }
     }
 }
