@@ -36,7 +36,7 @@ class Commander {
                 this.CostP.style.color = "#dd0000";
             }
             else {
-                this.CostP.style.color = "#1e9231";
+                this.CostP.style.color = "#6eff86";
             }
             if(this.BonP == null){
                 this.BonP = document.getElementById("CommanderBon");

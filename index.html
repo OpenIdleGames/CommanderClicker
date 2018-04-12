@@ -14,6 +14,7 @@
     <!--<script src="http://peterolson.github.com/BigInteger.js/BigInteger.min.js"></script>-->
     <script src="PROPERTIES.js"></script>
     <script src="Utils.js"></script>
+    <script src="Orders.js"></script>
     <script src="commander.js"></script>
     <script src="Unit.js"></script>
     <script src="Upgrade.js"></script>    
@@ -47,13 +48,12 @@
             <div id="Main2Selector" class="Main2Selector">
                 
                 <button onclick="SelectMainWindow(0, 'Overview')">Overview</button>
+                <button onmouseover="HighlightDisabler()" id="OrderButton" onclick="SelectMainWindow(6, 'Orders'); HighlightDisabler();">Orders</button>
                 <button onclick="SelectMainWindow(1, 'Upgrades')">Upgrades</button>
                 <button onclick="SelectMainWindow(2, 'Commander')">Commander</button>
-                <button onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
                 <button onclick="SelectMainWindow(5, 'Promotion')">Promotion</button>
+                <button onclick="SelectMainWindow(3, 'Achievements')">Achievements</button>
                 <button onclick="SelectMainWindow(4, 'Options')">Options</button>
-                
-                
             </div>
             
             <div id="Main2Container" class="Main2Container">
@@ -63,14 +63,18 @@
                     <table id="UnitOverviewTable">
                         <tbody id="UnitOverviewTableBody">
                             <tr>
-                                <th colspan="2">Coins produced so far</th>
+                                <th></th>                                
+                                <th>Current CPS</th>
+                                <th>Coins produced so far</th>
                             </tr>
                             <tr>
                                 <td style="font-weight: bold;">Combined</td>
+                                <td id="CurrentCPS"></td>
                                 <td id="UnitCombinedProd">0</td>
                             </tr>
                             <tr>
                                 <td style="font-weight: bold;">Clicks</td>
+                                <td id="ClickCPSPart">0</td>
                                 <td id="ClickProd">0</td>
                             </tr>
                         </tbody>
@@ -101,20 +105,25 @@
                     <p><span id="CommanderCurrentTime"></span></p>
                 </div>
                 
+
                 <!--Achievments-->
                 <div id="Main2W3" class="DisabledMain2">
                     <h5>You get coin multipliers for each unit when you have 25, 50, 100, 250, 500, 1000 of it.</h5>
                     <p>Work in Progress</p>
                 </div>
 
-                <!--Promotion-->
+                
                 
                 
                 <!--Options-->
                 <div id="Main2W4" class="DisabledMain2">
                     <button onclick="Reset()">Reset</button>
+
+                    <p>I would like to thank my best friend and the people on Reddit.com/r/incremental_games for their help making this game better.</p>
                 </div>   
-                
+
+
+                <!--Promotion-->
                 <div id="Main2W5" class="DisabledMain2">
                     <h5>You did a great job!<br>You can get promoted to lead a new army. You have to start over but the government will channel more supply to your units.<br></h5>
                     <br><br>
@@ -126,23 +135,49 @@
                     <p>You get Supply boxes based on your total coin earnings in this run.</p>  
                     <p>3% boost to all coin production for each Supply box.</p>                  
                 </div>  
+
+
+                <!--Order-->
+                <div id="Main2W6" class="DisabledMain2">
+                    <h5>Choose an Order for your army. They will perform it in 10 to 30 minutes then you can choose another one.</h5>    
+                    <div class="OrderHolderDiv">
+                        <a class="OrderA" id="OrderA0" onclick="ChoseOrder(0)">
+                            <div class="OrderInfoHolder">
+                                <h5 class="OrderHolder" id="OrderName0">Order 1</h5>
+                                <span class="OrderHolder" id="OrderDesc0">Raiding nearby villages for</span>
+                                <span class="OrderHolder" id="OrderTime0"> 10 minutes</span>
+                                <span class="OrderHolder" id="OrderBonus0">10% coin bonus</span>
+                            </div>
+                        </a>
+                        <a class="OrderA" id="OrderA1" onclick="ChoseOrder(1)">
+                            <div class="OrderInfoHolder">
+                                <h5 class="OrderHolder" id="OrderName1">Order 1</h5>
+                                <span class="OrderHolder" id="OrderDesc1">Raiding nearby villages for</span>
+                                <span class="OrderHolder"  id="OrderTime1"> 10 minutes</span>
+                                <span class="OrderHolder" id="OrderBonus1">10% coin bonus</span>
+                            </div>
+                        </a>
+                        <a class="OrderA" id="OrderA2" onclick="ChoseOrder(2)">
+                            <div class="OrderInfoHolder">
+                                <h5 class="OrderHolder" id="OrderName2">Order 1</h5>
+                                <span class="OrderHolder" id="OrderDesc2">Raiding nearby villages for</span>
+                                <span class="OrderHolder"  id="OrderTime2"> 10 minutes</span>
+                                <span class="OrderHolder" id="OrderBonus2">10% coin bonus</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>  
             </div>
           </div>
         <div class="main3 noselect" id="main3">
             <h1>Store</h1>
-            <h5>Buy amount:</h5>
-            <div>
-                <form>
-                    <label for="AmRadio1"><input type="radio" name="amount" value="1" id="AmRadio1"> 1</label>
-                    <label for="AmRadio2"><input type="radio" name="amount" value="10" id="AmRadio2"> 10</label>
-                    <label for="AmRadio3"><input type="radio" name="amount" value="100" id="AmRadio3"> 100</label>
-                    <label for="AmRadio4"><input type="radio" name="amount" value="0" id="AmRadio4"> Max</label>
-                </form>            
+            <h5 id="BuyAmountLabel">Buy amount:</h5>
+            
+            <div class="slidecontainer">                
+                <input type="range" min="0" max="8" value="1" step="1" class="slider" id="BuyAmountSlider">
+                <!--<input type="checkbox" id="MaxAmount" value="0">Max<br-->
             </div>
-            
             <div id="UnitOuterDiv" class="UnitOuterDiv">
-            
-            
             </div>                  
         </div>
   </div>

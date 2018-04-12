@@ -15,12 +15,12 @@ class Upgrade {
             switch (this.type) {
                 case "Unit":
                     {
-                        return Math.pow(this.unit.baseCost, 2) * Math.pow(this.amount, this.amount);
+                        return this.unit.baseCost * 8 * Math.pow(this.amount * 2, this.amount * 1.5);
                         break;
                     }
                 case "Click":
                     {
-                        return 80 * Math.exp(this.amount * this.amount / 1.6);
+                        return 64 * Math.exp(this.amount * this.amount / 1.2);
                         break;
                     }
             }
@@ -84,7 +84,7 @@ function UpdateUpgradeStuff() {
                 c.innerHTML = "Cost: " + format(u.cost2());
             }
             if(coins - u.cost2() >= 0){
-                c.style.color = "#1e9231";
+                c.style.color = "#6eff86";
             }
             else{
                 c.style.color = "#ee0000";
@@ -144,12 +144,12 @@ function UpgradeInit() {
     //name, cost, type, unitID, amount, known, desc
     for(var i = 0; i < units.length; i++){
         var u = units[i];
-        for(var j = 0; j < 8; j++){
+        for(var j = 0; j < 15; j++){
             Upgrades.push(new Upgrade(u.name + " lvl " + (j+1), 1, "Unit", i, j+1, true, "Doubles raiding power for " + u.name + " units."));
         }
     }
     
-    for(var k = 0; k < 10; k++) {
+    for(var k = 0; k < 20; k++) {
         Upgrades.push(new Upgrade("Clicking lvl " + (k+1), 1, "Click", -1, k+1, true, "Doubles click strength."));
     }
 }
