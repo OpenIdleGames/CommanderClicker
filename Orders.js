@@ -56,8 +56,7 @@ function LoadOrders(){
                 currentOrders[i].Desc = save[1];
                 currentOrders[i].BonusType = save[2];
                 currentOrders[i].Time = parseInt(save[3]);
-                currentOrders[i].BonusAmount = parseInt(save[4]);
-                console.log(currentOrders[i].BonusAmount);
+                currentOrders[i].BonusAmount = parseFloat(save[4]);
             }
             timeToFinish = parseInt(localStorage.getItem("RemainingTime")) + Date.now();
             DisplayCurrentOrders();
