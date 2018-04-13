@@ -1,6 +1,7 @@
 window.ondragstart = function() { return false; };
 
-var tickTime =  100;
+var tickTime =  10;
+var uiTick = 6;
 
 var coinIMG;
 
@@ -16,7 +17,6 @@ var supplyBoxes = 0;
 var coins = 0;
 
 var coinsOverflow = 0;
-var cpsOverflow = 0;
 
 var units = [];
 var Upgrades = [];
@@ -73,7 +73,7 @@ function UpdateCPS() {
 
 function GameTick(){ 
     if(run){       
-        deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));   
+        deltaTime = parseFloat(((parseFloat(Date.now())-parseFloat(lastTickTime)) / tickTime));  
         coins += CalculateGameTickProduction(true, deltaTime);
         clickUnitBonus =  clickCount * (0.01 + clickLevel * 0.001);  
         lastTickTime = parseInt(Date.now());
@@ -376,11 +376,15 @@ GenerateCurrentOrders();
 
 TryLoad();
 
-setTimeout(LoadLastPage, 100);
-setTimeout(UnitStuffGen, 100);
+
+setTimeout(UnitStuffGen, 10);
 setTimeout(UpgradeGenStuff, 10);
-setInterval(GameUpdateUI, 100);
-setInterval(GameTick, 1000/tickTime);
+
+setInterval(GameUpdateUI, 1000 / uiTick);
+setInterval(GameTick, 1000 / tickTime);
 setInterval(Save, 1500);
 setInterval(DisplayUnitUIObjects,  100);
+
+
+setTimeout(LoadLastPage, 100);
 setTimeout(start, 10);
